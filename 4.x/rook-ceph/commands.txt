@@ -1,0 +1,10 @@
+ceph versions
+ceph osd status
+ceph df
+rados df
+
+ceph fs volume ls
+ceph osd pool application get
+
+ceph -s
+
