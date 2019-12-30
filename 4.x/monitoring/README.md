@@ -2,13 +2,8 @@
 
 ## Create custom Grafana dashbaords
 
-### IBM Bluepages:
-- LDAP URL: ldap://bluepages.ibm.com:389/ou=bluepages,o=ibm.com?emailAddress?sub?(objectClass=person)
-- preferredUsername: emailAddress
-- name: cn
-- id: uid
-- email: emailAddress
+- oc new-project app-monitoring
 
-- Leave Bind DN and Bind password and CA File blank.
-
-- Save the setting and login with the ldap authentication provider.
+- Deploy custom grafana instance and dashbaords:
+a) Search for grafana comunity operator
+![](https://user-images.githubusercontent.com/13202504/51103212-ef4ab880-1807-11e9-8d00-fad95b8c528b.png)
