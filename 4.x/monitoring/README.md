@@ -6,4 +6,4 @@
 
 - Deploy custom grafana instance and dashbaords:
 a) Search for grafana comunity operator
-![](https://user-images.githubusercontent.com/13202504/51103212-ef4ab880-1807-11e9-8d00-fad95b8c528b.png)
+![]((https://user-images.githubusercontent.com/13202504/71592411-1d7af280-2b56-11ea-898e-e1b01948008d.png)
