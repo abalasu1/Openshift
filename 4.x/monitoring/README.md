@@ -11,7 +11,7 @@ a) Search for grafana comunity operator
 b) Install the grafana operator in app-monitoring namespace
 ![](https://user-images.githubusercontent.com/13202504/71592590-d6413180-2b56-11ea-9920-5ae753db5a4b.png)
 
-c) Create a grafana instance
+c) Create a grafana instance, not down the username and password for admin user specified, which will be needed latter
 ![](https://user-images.githubusercontent.com/13202504/71593269-65e7df80-2b59-11ea-909d-3051ae5c2ce1.png)
 
 d) Allow prometheus to connect to custom grafana
