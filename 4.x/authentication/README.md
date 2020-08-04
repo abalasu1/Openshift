@@ -13,6 +13,17 @@
 
 - Save the setting and login with the ldap authentication provider.
 
-### To give admin rights to your id:
+### To give admin rights to your id, if needed, do this sparingly for a few users:
 - oc adm policy add-cluster-role-to-user cluster-admin abalasu1@in.ibm.com
 - oc adm policy add-scc-to-user privileged abalasu1@in.ibm.com
+
+### htpasswd:
+- Option 1: install htpasswd on mac osx or linux (depends on your os) Option 2: use htpasswd
+on a docker container (requires docker on your machine)
+
+- docker run --rm -ti xmartlabs/htpasswd admin password >> htpasswd
+- docker run --rm -ti xmartlabs/htpasswd arunb password >> htpasswd
+
+- Setup htpassword authentication on Openshift
+
+
