@@ -4,12 +4,12 @@ metadata:
   labels:
     app: add
   name: add
-  namespace: calculator
+  namespace: <PROJECT>
 spec:
   lookupPolicy:
     local: true
 status:
-  dockerImageRepository: image-registry.openshift-image-registry:5000/calculator/add
+  dockerImageRepository: <DOCKERREPOSITORY>
   tags:
   - items:
     tag: latest

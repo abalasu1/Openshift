@@ -4,7 +4,7 @@ metadata:
   labels:
     app: add
   name: add
-  namespace: calculator
+  namespace: <PROJECT>
 spec:
   replicas: 1
   selector:
@@ -25,7 +25,7 @@ spec:
         deploymentconfig: add       
     spec:
       containers:
-      - image: image-registry.openshift-image-registry.svc:5000/calculator/add
+      - image: <BASICOPADD>
         imagePullPolicy: Always
         name: add
         ports:
@@ -48,23 +48,4 @@ spec:
         name: add:latest
         namespace: calculator
     type: ImageChange
-  - type: ConfigChange      
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: basic-op-add
-  namespace: calculator
-  labels:
-    app: basic-op-add
-  annotations:
-    prometheus.io/scrape: 'true' 
-    prometheus.io/path: '/actuator/prometheus'     
-spec:
-  type: ClusterIP
-  ports:
-  - name: "8001"
-    port: 8001
-    targetPort: 8001
-  selector:
-    app: basic-op-add
+  - type: ConfigChange

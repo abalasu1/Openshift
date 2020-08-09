@@ -4,7 +4,7 @@ metadata:
   labels:
     app: add
   name: add
-  namespace: calculator
+  namespace: <PROJECT>
 spec:
   output:
     to:
@@ -12,10 +12,10 @@ spec:
       name: add:latest
   runPolicy: Serial
   source:
-    contextDir: E2E-Applications/Calculator-Spring-Boot/basic-op-add/
+    contextDir: Openshift/4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-add/
     git:
       ref: master
-      uri: https://github.com/abalasu1/IBM-Cloud-Private.git
+      uri: <GITHUBREPO>
     type: Git
   strategy:
     dockerStrategy:

@@ -11,7 +11,7 @@ COMPOSITEOP=$(DOCKERREPOSITORY)/$(PROJECT)/compositeop
 PROCESSOR=$(DOCKERREPOSITORY)/$(PROJECT)/processor
 UI=$(DOCKERREPOSITORY)/$(PROJECT)/ui
 
-GITHUBREPO=https://github.com/abalasu1/IBM-Private-Cloud.git
+GITHUBREPO=https://github.com/abalasu1/Openshift.git
 
 FORTIO_POD=$(shell kubectl get pod -n $(PROJECT) -l app=fortio -o jsonpath='{.items[0].metadata.name}')
 DEBUG_POD=$(shell kubectl get pod -n $(PROJECT) -l app=curl -o jsonpath='{.items[0].metadata.name}')
@@ -23,25 +23,25 @@ clean:
 	-bash -c 'oc delete project $(PROJECT)'
 
 init-add:
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/add/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~add.$(SUBDOMAIN)~g' ./basicop/add/route.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~add.$(SUBDOMAIN)~g' ./basicop-add/route.yaml  | oc apply -f -
 
 build-add:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/add/imagestream.yaml  | oc apply -f -
-	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/add/buildconfig.yaml  | oc apply -f -	
+	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/buildconfig.yaml  | oc apply -f -	
 	oc start-build add
 
 deploy-add:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/add/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/deploymentconfig.yaml  | oc apply -f -
 
 deploy-madd:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/add/deployment.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/deployment.yaml  | oc apply -f -
 
 clean-add:
 	-oc delete all -l app=add
 
 test-add:
-	-bash -c 'basicop/add/test.sh add.$(SUBDOMAIN)'
+	-bash -c 'basicop-add/test.sh add.$(SUBDOMAIN)'
 
 init-subtract:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/service.yaml  | oc apply -f -
