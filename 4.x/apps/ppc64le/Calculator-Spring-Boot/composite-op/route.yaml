@@ -7,7 +7,7 @@ metadata:
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /composite-op/mean
+  path: /compositeop/mean
   port:
     targetPort: 8005-tcp
   to:
@@ -25,7 +25,7 @@ metadata:
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /composite-op/square
+  path: /compositeop/square
   port:
     targetPort: 8005-tcp
   to:
@@ -43,7 +43,7 @@ metadata:
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /composite-op/cube
+  path: /compositeop/cube
   port:
     targetPort: 8005-tcp
   to:
@@ -61,7 +61,7 @@ metadata:
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /composite-op/eval
+  path: /compositeop/eval
   port:
     targetPort: 8005-tcp
   to:
@@ -79,7 +79,7 @@ metadata:
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /composite-op/evalrpnexpr
+  path: /compositeop/evalrpnexpr
   port:
     targetPort: 8005-tcp
   to:

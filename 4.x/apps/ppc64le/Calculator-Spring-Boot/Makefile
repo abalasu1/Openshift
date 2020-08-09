@@ -96,7 +96,7 @@ test-divide:
 
 init-compositeop:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~compositeop.$(SUBDOMAIN)~g' ./composite-op/route.yaml  | oc apply -f -	
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~composite-op.$(SUBDOMAIN)~g' ./composite-op/route.yaml  | oc apply -f -	
 
 build-compositeop:
 	-sed -e 's~<CONTAINER>~$(COMPOSITEOP)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/imagestream.yaml  | oc apply -f -
@@ -104,13 +104,13 @@ build-compositeop:
 	oc start-build composite-op
 
 deploy-compositeop:
-	-sed -e 's~<CONTAINER>~$(COMPOSITEOP)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(COMPOSITEOP)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/deployment.yaml  | oc apply -f -
 
 clean-compositeop:
 	-oc delete all -l app=compositeop
 
 test-compositeop:
-	-bash -c 'composite-op/test.sh compositeop.$(SUBDOMAIN)'	
+	-bash -c 'composite-op/test.sh composite-op.$(SUBDOMAIN)'	
 
 init-processor:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./processor/service.yaml  | oc apply -f -
