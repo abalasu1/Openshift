@@ -9,5 +9,5 @@ COPY src src
 RUN ./mvnw install -DskipTests
 
 FROM openjdk:8-jdk-alpine
-COPY --from=build /workspace/app/target/processor-1.0.0.jar /app.jar
+COPY --from=build /workspace/app/target/calculator-processor-1.0.0.jar /app.jar
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
