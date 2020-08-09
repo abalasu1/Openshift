@@ -9,7 +9,7 @@ spec:
   host: <DOMAIN>
   path: /basicop/divide
   port:
-    targetPort: 8003
+    targetPort: 8004
   to:
     kind: Service
     name: basic-op-divide

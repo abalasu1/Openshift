@@ -2,22 +2,22 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
-    app: multiply
-  name: multiply
+    app: composite-op
+  name: composite-op
   namespace: <PROJECT>
 spec:
   output:
     to:
       kind: ImageStreamTag
-      name: multiply:latest
+      name: composite-op:latest
   runPolicy: Serial
   source:
-    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-multiply/
+    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/composite-op/
     git:
       ref: master
       uri: <GITHUBREPO>
     type: Git
   strategy:
     dockerStrategy:
-      dockerfilePath: ./docker/Dockerfile
+      dockerfilePath: ./Dockerfile
     type: Source

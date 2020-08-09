@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: basic-op-multiply
+  name: composite-op
   namespace: <PROJECT>
   labels:
-    app: basic-op-multiply
+    app: composite-op
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: basic-op-multiply
+      app: composite-op
   strategy: 
     type: Recreate  
   template:
     metadata:
       labels:
-        app: basic-op-multiply
+        app: composite-op
     spec:
       containers:
       - image: <CONTAINER>
-        name: multiply
+        name: composite-op
         imagePullPolicy: Always
         ports:
-        - containerPort: 8003
+        - containerPort: 8005
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"        
         readinessProbe:
           httpGet:
             path: /actuator
-            port: 8003
+            port: 8005
           initialDelaySeconds: 10
           timeoutSeconds: 10
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8003
+            port: 8005
           initialDelaySeconds: 60
           timeoutSeconds: 10          
         resources:

@@ -2,14 +2,14 @@ apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   labels:
-    app: multiply
-  name: multiply
+    app: composite-op
+  name: composite-op
   namespace: <PROJECT>
 spec:
   lookupPolicy:
-    local: true
+    local: false
 status:
-  dockerImageRepository: <DOCKERREPOSITORY>
+  dockerImageRepository: <CONTAINER>
   tags:
   - items:
     tag: latest
