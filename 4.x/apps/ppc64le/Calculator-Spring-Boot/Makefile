@@ -41,22 +41,22 @@ test-add:
 	-bash -c 'basic-op-add/test.sh add.$(SUBDOMAIN)'
 
 init-subtract:
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~subtract.$(SUBDOMAIN)~g' ./basicop/subtract/route.yaml  | oc apply -f -	
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~subtract.$(SUBDOMAIN)~g' ./basic-op-subtract/route.yaml  | oc apply -f -	
 
 build-subtract:
-	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/imagestream.yaml  | oc apply -f -
-	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/buildconfig.yaml  | oc apply -f -	
+	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/buildconfig.yaml  | oc apply -f -	
 	oc start-build subtract
 	
 deploy-subtract:
-	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/deploymentconfig.yaml  | oc apply -f -
 
 clean-subtract:
 	-oc delete all -l app=subtract
 
 test-subtract:
-	-bash -c 'basicop/subtract/test.sh subtract.$(SUBDOMAIN)'	
+	-bash -c 'basic-op-subtract/test.sh subtract.$(SUBDOMAIN)'	
 
 init-multiply:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/multiply/service.yaml  | oc apply -f -
