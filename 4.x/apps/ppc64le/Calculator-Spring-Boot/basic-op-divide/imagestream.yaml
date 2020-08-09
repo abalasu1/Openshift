@@ -1,0 +1,15 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: divide
+  name: divide
+  namespace: <PROJECT>
+spec:
+  lookupPolicy:
+    local: true
+status:
+  dockerImageRepository: <DOCKERREPOSITORY>
+  tags:
+  - items:
+    tag: latest

@@ -77,22 +77,22 @@ test-multiply:
 	-bash -c 'basic-op-multiply/test.sh multiply.$(SUBDOMAIN)'	
 
 init-divide:
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/divide/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~divide.$(SUBDOMAIN)~g' ./basicop/divide/route.yaml  | oc apply -f -	
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~divide.$(SUBDOMAIN)~g' ./basic-op-divide/route.yaml  | oc apply -f -	
 
 build-divide:
-	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/divide/imagestream.yaml  | oc apply -f -
-	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/divide/buildconfig.yaml  | oc apply -f -	
+	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/buildconfig.yaml  | oc apply -f -	
 	oc start-build divide
 	
 deploy-divide:
-	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/divide/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/deploymentc.yaml  | oc apply -f -
 
 clean-divide:
 	-oc delete all -l app=divide
 
 test-divide:
-	-bash -c 'basicop/divide/test.sh divide.$(SUBDOMAIN)'	
+	-bash -c 'basic-op-divide/test.sh divide.$(SUBDOMAIN)'	
 
 init-compositeop:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./compositeop/service.yaml  | oc apply -f -

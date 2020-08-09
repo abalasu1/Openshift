@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: basic-op-multiply
+  name: basic-op-divide
   namespace: <PROJECT>
   labels:
-    app: basic-op-multiply
+    app: basic-op-divide
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: basic-op-multiply
+      app: basic-op-divide
   strategy: 
     type: Recreate  
   template:
     metadata:
       labels:
-        app: basic-op-multiply
+        app: basic-op-divide
     spec:
       containers:
       - image: <CONTAINER>
-        name: multiply
+        name: divide
         imagePullPolicy: Always
         ports:
-        - containerPort: 8003
+        - containerPort: 8004
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"        
         readinessProbe:
           httpGet:
             path: /actuator
-            port: 8003
+            port: 8004
           initialDelaySeconds: 10
           timeoutSeconds: 10
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8003
+            port: 8004
           initialDelaySeconds: 60
           timeoutSeconds: 10          
         resources:

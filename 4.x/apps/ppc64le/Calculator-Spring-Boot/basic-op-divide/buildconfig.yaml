@@ -1,0 +1,23 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: divide
+  name: divide
+  namespace: <PROJECT>
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: divide:latest
+  runPolicy: Serial
+  source:
+    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-divide/
+    git:
+      ref: master
+      uri: <GITHUBREPO>
+    type: Git
+  strategy:
+    dockerStrategy:
+      dockerfilePath: ./docker/Dockerfile
+    type: Source
