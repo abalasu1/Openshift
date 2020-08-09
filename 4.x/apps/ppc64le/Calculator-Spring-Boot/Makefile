@@ -59,22 +59,22 @@ test-subtract:
 	-bash -c 'basic-op-subtract/test.sh subtract.$(SUBDOMAIN)'	
 
 init-multiply:
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/multiply/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~multiply.$(SUBDOMAIN)~g' ./basicop/multiply/route.yaml  | oc apply -f -	
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-multiply/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~multiply.$(SUBDOMAIN)~g' ./basic-op-multiply/route.yaml  | oc apply -f -	
 
 build-multiply:
-	-sed -e 's~<CONTAINER>~$(BASICOPMUL)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/multiply/imagestream.yaml  | oc apply -f -
-	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/multiply/buildconfig.yaml  | oc apply -f -	
+	-sed -e 's~<CONTAINER>~$(BASICOPMUL)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-multiply/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-multiply/buildconfig.yaml  | oc apply -f -	
 	oc start-build multiply
 	
 deploy-multiply:
-	-sed -e 's~<CONTAINER>~$(BASICOPMUL)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/multiply/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPMUL)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-multiply/deployment.yaml  | oc apply -f -
 
 clean-multiply:
 	-oc delete all -l app=multiply
 
 test-multiply:
-	-bash -c 'basicop/multiply/test.sh multiply.$(SUBDOMAIN)'	
+	-bash -c 'basic-op-multiply/test.sh multiply.$(SUBDOMAIN)'	
 
 init-divide:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/divide/service.yaml  | oc apply -f -
