@@ -7,7 +7,7 @@ BASICOPADD=$(DOCKERREPOSITORY)/$(PROJECT)/add
 BASICOPSUB=$(DOCKERREPOSITORY)/$(PROJECT)/subtract
 BASICOPMUL=$(DOCKERREPOSITORY)/$(PROJECT)/multiply
 BASICOPDIV=$(DOCKERREPOSITORY)/$(PROJECT)/divide
-COMPOSITEOP=$(DOCKERREPOSITORY)/$(PROJECT)/compositeop
+COMPOSITEOP=$(DOCKERREPOSITORY)/$(PROJECT)/composite-op
 PROCESSOR=$(DOCKERREPOSITORY)/$(PROJECT)/processor
 UI=$(DOCKERREPOSITORY)/$(PROJECT)/ui
 
@@ -101,7 +101,7 @@ init-compositeop:
 build-compositeop:
 	-sed -e 's~<CONTAINER>~$(COMPOSITEOP)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/imagestream.yaml  | oc apply -f -
 	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/buildconfig.yaml  | oc apply -f -	
-	oc start-build compositeop
+	oc start-build composite-op
 
 deploy-compositeop:
 	-sed -e 's~<CONTAINER>~$(COMPOSITEOP)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./composite-op/deploymentconfig.yaml  | oc apply -f -
