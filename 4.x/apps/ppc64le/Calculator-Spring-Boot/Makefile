@@ -50,7 +50,7 @@ build-subtract:
 	oc start-build subtract
 	
 deploy-subtract:
-	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPSUB)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-subtract/deployment.yaml  | oc apply -f -
 
 clean-subtract:
 	-oc delete all -l app=subtract
