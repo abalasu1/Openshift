@@ -86,7 +86,7 @@ build-divide:
 	oc start-build divide
 	
 deploy-divide:
-	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/deploymentc.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPDIV)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-divide/deployment.yaml  | oc apply -f -
 
 clean-divide:
 	-oc delete all -l app=divide
