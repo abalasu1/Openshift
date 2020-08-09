@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: calculatoringress
+  namespace: calculator
+spec:
+  rules:
+  - host: calculator.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: discovery
+          servicePort: 8101
+      - path: /zipkin
+        backend:
+          serviceName: zipkin
+          servicePort: 9411     
+      - path: /basicop/add
+        backend:
+          serviceName: basic-op-add
+          servicePort: 8001
+      - path: /basicop/subtract
+        backend:
+          serviceName: basic-op-subtract
+          servicePort: 8002
+      - path: /basicop/multiply
+        backend:
+          serviceName: basic-op-multiply
+          servicePort: 8003
+      - path: /basicop/divide
+        backend:
+          serviceName: basic-op-divide
+          servicePort: 8004
+      - path: /compositeop/eval
+        backend:
+          serviceName: composite-op
+          servicePort: 8005        
+      - path: /compositeop/mean
+        backend:
+          serviceName: composite-op
+          servicePort: 8005        
+      - path: /compositeop/square
+        backend:
+          serviceName: composite-op
+          servicePort: 8005        
+      - path: /compositeop/cube
+        backend:
+          serviceName: composite-op
+          servicePort: 8005
+      - path: /compositeop/evalrpn
+        backend:
+          serviceName: composite-op
+          servicePort: 8005
+      - path: /processor/calculate
+        backend:
+          serviceName: processor
+          servicePort: 8006 
+      - path: /processor/mtcalculate
+        backend:
+          serviceName: processor
+          servicePort: 8006
+      - path: /eventprocessor/submit
+        backend:
+          serviceName: eventprocessor
+          servicePort: 8007     
+      - path: /eventprocessor/result
+        backend:
+          serviceName: eventprocessor
+          servicePort: 8007               

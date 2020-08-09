@@ -1,0 +1,23 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: add
+  name: add
+  namespace: calculator
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: add:latest
+  runPolicy: Serial
+  source:
+    contextDir: E2E-Applications/Calculator-Spring-Boot/basic-op-add/
+    git:
+      ref: master
+      uri: https://github.com/abalasu1/IBM-Cloud-Private.git
+    type: Git
+  strategy:
+    dockerStrategy:
+      dockerfilePath: ./docker/Dockerfile
+    type: Source

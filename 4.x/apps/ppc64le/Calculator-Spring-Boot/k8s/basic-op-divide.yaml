@@ -1,0 +1,61 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: basic-op-divide
+  namespace: calculator
+  labels:
+    app: basic-op-divide
+spec:
+  replicas: 1
+  strategy: 
+    type: Recreate  
+  template:
+    metadata:
+      labels:
+        app: basic-op-divide
+    spec:
+      containers:
+      - image: arunimi/basic-op-divide:1.0.0
+        name: divide
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8004
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"        
+        readinessProbe:
+          httpGet:
+            path: /actuator
+            port: 8004
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8004
+          initialDelaySeconds: 60
+          timeoutSeconds: 10          
+        resources:
+          requests:
+            cpu: 20m
+            memory: 50Mi
+      restartPolicy: Always 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: basic-op-divide
+  namespace: calculator
+  labels:
+    app: basic-op-divide
+  annotations:
+    prometheus.io/scrape: 'true' 
+    prometheus.io/path: '/actuator/prometheus'     
+spec:
+  type: ClusterIP
+  ports:
+  - name: "8004"
+    port: 8004
+    targetPort: 8004
+  selector:
+    app: basic-op-divide

@@ -1,0 +1,48 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zipkin
+  namespace: calculator
+  labels:
+    app: zipkin
+spec:
+  replicas: 1
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: zipkin
+    spec:
+      containers:
+      - image: openzipkin/zipkin
+        name: zipkin
+        ports:
+        - containerPort: 9411
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi          
+      restartPolicy: Always         
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zipkin
+  namespace: calculator
+  labels:
+    app: zipkin
+spec:
+  type: ClusterIP
+  ports:
+  - name: "9411"
+    port: 9411
+    targetPort: 9411
+  selector:
+    app: zipkin
