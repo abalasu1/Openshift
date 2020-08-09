@@ -2,17 +2,17 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   labels:
-    app: add
-  name: add
+    app: subtract
+  name: subtract
   namespace: <PROJECT>
 spec:
   output:
     to:
       kind: ImageStreamTag
-      name: add:latest
+      name: subtract:latest
   runPolicy: Serial
   source:
-    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-add/
+    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-subtract/
     git:
       ref: master
       uri: <GITHUBREPO>

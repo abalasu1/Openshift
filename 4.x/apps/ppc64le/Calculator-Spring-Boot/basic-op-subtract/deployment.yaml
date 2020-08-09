@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: basic-op-add
+  name: basic-op-subtract
   namespace: <PROJECT>
   labels:
-    app: basic-op-add
+    app: basic-op-subtract
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: basic-op-add
+      app: basic-op-subtract
   strategy: 
     type: Recreate  
   template:
     metadata:
       labels:
-        app: basic-op-add
+        app: basic-op-subtract
     spec:
       containers:
       - image: <CONTAINER>
-        name: add
+        name: subtract
         imagePullPolicy: Always
         ports:
-        - containerPort: 8001
+        - containerPort: 8002
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "docker"        
         readinessProbe:
           httpGet:
             path: /actuator
-            port: 8001
+            port: 8002
           initialDelaySeconds: 10
           timeoutSeconds: 10
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8001
+            port: 8002
           initialDelaySeconds: 60
           timeoutSeconds: 10          
         resources:

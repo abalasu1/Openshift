@@ -23,25 +23,22 @@ clean:
 	-bash -c 'oc delete project $(PROJECT)'
 
 init-add:
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~add.$(SUBDOMAIN)~g' ./basicop-add/route.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-add/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' -e 's~<DOMAIN>~add.$(SUBDOMAIN)~g' ./basic-op-add/route.yaml  | oc apply -f -
 
 build-add:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/imagestream.yaml  | oc apply -f -
-	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/buildconfig.yaml  | oc apply -f -	
+	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-add/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-add/buildconfig.yaml  | oc apply -f -	
 	oc start-build add
 
 deploy-add:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/deploymentconfig.yaml  | oc apply -f -
-
-deploy-madd:
-	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basicop-add/deployment.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(BASICOPADD)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./basic-op-add/deployment.yaml  | oc apply -f -
 
 clean-add:
 	-oc delete all -l app=add
 
 test-add:
-	-bash -c 'basicop-add/test.sh add.$(SUBDOMAIN)'
+	-bash -c 'basic-op-add/test.sh add.$(SUBDOMAIN)'
 
 init-subtract:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./basicop/subtract/service.yaml  | oc apply -f -

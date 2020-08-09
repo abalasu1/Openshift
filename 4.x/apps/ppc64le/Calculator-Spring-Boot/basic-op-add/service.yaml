@@ -4,10 +4,7 @@ metadata:
   name: basic-op-add
   namespace: <PROJECT>
   labels:
-    app: basic-op-add
-  annotations:
-    prometheus.io/scrape: 'true' 
-    prometheus.io/path: '/actuator/prometheus'     
+    app: basic-op-add     
 spec:
   type: ClusterIP
   ports:

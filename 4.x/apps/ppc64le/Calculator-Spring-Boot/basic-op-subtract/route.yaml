@@ -2,16 +2,16 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app: add
-  name: add
+    app: subtract
+  name: subtract
   namespace: <PROJECT>
 spec:
   host: <DOMAIN>
-  path: /basicop/add
+  path: /basicop/subtract
   port:
-    targetPort: 8001
+    targetPort: 8002
   to:
     kind: Service
-    name: basic-op-add
+    name: basic-op-subtract
     weight: 100
   wildcardPolicy: None
