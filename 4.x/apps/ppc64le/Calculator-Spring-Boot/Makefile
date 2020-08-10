@@ -122,7 +122,7 @@ build-processor:
 	oc start-build processor
 
 deploy-processor:
-	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./processor/deploymentconfig.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./processor/deployment.yaml  | oc apply -f -
 
 clean-processor:
 	-oc delete all -l app=processor
