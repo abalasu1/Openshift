@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: development
+    active: default
   application:
     name: basic-op-subtract
   sleuth:
@@ -22,22 +22,4 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-      environment: prod
----      
-spring:
-  profiles: development     
-eureka:
-  client:
-    registerWithEureka: true
-    fetchRegistry: true
-    service-url:
-      defaultZone: ${EUREKA_URI:http://localhost:8101/eureka}
----
-spring:
-  profiles: docker     
-eureka:
-  client:
-    registerWithEureka: true
-    fetchRegistry: true
-    service-url:
-      defaultZone: ${EUREKA_URI:http://discovery:8101/eureka}       
+      environment: prod      
