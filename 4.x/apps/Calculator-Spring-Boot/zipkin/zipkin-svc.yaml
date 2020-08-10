@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zipkin-ppc64le
+    app.kubernetes.io/component: zipkin-ppc64le
+    app.kubernetes.io/instance: zipkin-ppc64le
+  name: zipkin
+  namespace: calculator
+spec:
+  ports:
+  - name: 9411-tcp
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  selector:
+    deploymentconfig: zipkin-ppc64le
+  sessionAffinity: None
+  type: ClusterIP
