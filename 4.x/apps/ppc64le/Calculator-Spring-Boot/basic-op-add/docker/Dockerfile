@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-alpine as build
+FROM maven:jdk11 as build
 WORKDIR /workspace/app
 
 COPY mvnw .
