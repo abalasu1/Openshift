@@ -1,4 +1,5 @@
-FROM ppc64le/openjdk:11.0.2-jdk-slim as build
+#FROM ppc64le/openjdk:11.0.2-jdk-slim as build
+FROM registry.access.redhat.com/ubi8/openjdk-11 as build
 WORKDIR /workspace/app
 
 COPY mvnw .
