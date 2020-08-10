@@ -10,7 +10,7 @@ RUN ./mvnw install -DskipTests
 
 FROM registry.access.redhat.com/ubi8/ubi:8.2
 
-RUN dnf install -y java-11-openjdk.ppc64le
+RUN dnf install -y java-11-openjdk
 COPY --from=build /workspace/app/target/basic-op-subtract-1.0.0.jar /app.jar
 
 EXPOSE 8002/tcp
