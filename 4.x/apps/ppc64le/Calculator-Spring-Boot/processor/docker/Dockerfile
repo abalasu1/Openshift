@@ -11,7 +11,7 @@ RUN ./mvnw install -DskipTests
 FROM registry.access.redhat.com/ubi8/ubi:8.2
 
 RUN dnf install -y java-11-openjdk
-COPY --from=build /workspace/app/target/processor-1.0.0.jar /app.jar
+COPY --from=build /workspace/app/target/processor-1.0.0.jar/app.jar
 
 EXPOSE 8006/tcp
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
