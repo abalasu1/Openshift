@@ -1,4 +1,4 @@
-FROM maven:jdk11 as build
+FROM ppc64le/openjdk:11.0.2-jdk-slim as build
 WORKDIR /workspace/app
 
 COPY mvnw .
