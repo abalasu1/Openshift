@@ -15,6 +15,7 @@ RUN dnf install -y java-11-openjdk.ppc64le
 COPY --from=build /workspace/app/target/basic-op-add-1.0.0.jar /app.jar
 
 EXPOSE 8001/tcp
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
 
 #CMD ["java", "-jar", "./server.jar"]
 #FROM openjdk:8-jdk-alpine
