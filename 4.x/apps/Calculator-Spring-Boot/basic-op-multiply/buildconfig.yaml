@@ -12,7 +12,7 @@ spec:
       name: multiply:latest
   runPolicy: Serial
   source:
-    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-multiply/
+    contextDir: 4.x/apps/Calculator-Spring-Boot/basic-op-multiply/
     git:
       ref: master
       uri: <GITHUBREPO>

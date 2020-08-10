@@ -12,7 +12,7 @@ spec:
       name: add:latest
   runPolicy: Serial
   source:
-    contextDir: 4.x/apps/ppc64le/Calculator-Spring-Boot/basic-op-add/
+    contextDir: 4.x/apps/Calculator-Spring-Boot/basic-op-add/
     git:
       ref: master
       uri: <GITHUBREPO>
