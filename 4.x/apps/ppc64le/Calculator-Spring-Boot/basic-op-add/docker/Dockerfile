@@ -1,4 +1,3 @@
-#FROM ppc64le/openjdk:11.0.2-jdk-slim as build
 FROM registry.access.redhat.com/ubi8/openjdk-11 as build
 WORKDIR /workspace/app
 
@@ -11,7 +10,7 @@ RUN ./mvnw install -DskipTests
 
 FROM registry.access.redhat.com/ubi8/ubi:8.2
 
-RUN dnf install -y java-11-openjdk.ppc64le
+RUN dnf install -y java-11-openjdk
 COPY --from=build /workspace/app/target/basic-op-add-1.0.0.jar /app.jar
 
 EXPOSE 8001/tcp
