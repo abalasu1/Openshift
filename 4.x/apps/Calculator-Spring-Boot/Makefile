@@ -130,6 +130,24 @@ clean-processor:
 test-processor:
 	-bash -c 'processor/test.sh processor.$(SUBDOMAIN)'	
 
+init-eventprocessor:
+	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/service.yaml  | oc apply -f -
+	-sed -e 's~<PROJECT>~$(PROJECT)~g'  -e 's~<DOMAIN>~processor.$(SUBDOMAIN)~g' ./eventprocessor/route.yaml  | oc apply -f -	
+
+build-eventprocessor:
+	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/buildconfig.yaml  | oc apply -f -	
+	oc start-build eventprocessor
+
+deploy-eventprocessor:
+	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/deployment.yaml  | oc apply -f -
+
+clean-eventprocessor:
+	-oc delete all -l app=eventprocessor
+
+test-eventprocessor:
+	-bash -c 'eventprocessor/test.sh eventprocessor.$(SUBDOMAIN)'	
+
 init-ui:
 	-bash -c 'oc create serviceaccount ui-sa -n $(PROJECT) --as system:admin'
 	-bash -c 'oc adm policy add-scc-to-user anyuid -z ui-sa -n $(PROJECT) --as system:admin'
