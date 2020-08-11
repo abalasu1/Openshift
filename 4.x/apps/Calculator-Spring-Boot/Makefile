@@ -9,6 +9,7 @@ BASICOPMUL=$(DOCKERREPOSITORY)/$(PROJECT)/multiply
 BASICOPDIV=$(DOCKERREPOSITORY)/$(PROJECT)/divide
 COMPOSITEOP=$(DOCKERREPOSITORY)/$(PROJECT)/composite-op
 PROCESSOR=$(DOCKERREPOSITORY)/$(PROJECT)/processor
+EVENTPROCESSOR=$(DOCKERREPOSITORY)/$(PROJECT)/eventprocessor
 UI=$(DOCKERREPOSITORY)/$(PROJECT)/ui
 
 GITHUBREPO=https://github.com/abalasu1/Openshift.git
@@ -132,15 +133,15 @@ test-processor:
 
 init-eventprocessor:
 	-sed -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/service.yaml  | oc apply -f -
-	-sed -e 's~<PROJECT>~$(PROJECT)~g'  -e 's~<DOMAIN>~processor.$(SUBDOMAIN)~g' ./eventprocessor/route.yaml  | oc apply -f -	
+	-sed -e 's~<PROJECT>~$(PROJECT)~g'  -e 's~<DOMAIN>~eventprocessor.$(SUBDOMAIN)~g' ./eventprocessor/route.yaml  | oc apply -f -	
 
 build-eventprocessor:
-	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/imagestream.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(EVENTPROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/imagestream.yaml  | oc apply -f -
 	-sed -e 's~<GITHUBREPO>~$(GITHUBREPO)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/buildconfig.yaml  | oc apply -f -	
 	oc start-build eventprocessor
 
 deploy-eventprocessor:
-	-sed -e 's~<CONTAINER>~$(PROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/deployment.yaml  | oc apply -f -
+	-sed -e 's~<CONTAINER>~$(EVENTPROCESSOR)~g' -e 's~<PROJECT>~$(PROJECT)~g' ./eventprocessor/deployment.yaml  | oc apply -f -
 
 clean-eventprocessor:
 	-oc delete all -l app=eventprocessor

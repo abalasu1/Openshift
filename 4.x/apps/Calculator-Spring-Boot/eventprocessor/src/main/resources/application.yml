@@ -9,19 +9,7 @@ spring:
       probability: 1.0 
   zipkin:
     baseUrl: http://zipkin:9411/
-  cloud:
-    stream:
-      kafka:            
-        binder:
-          brokers:
-          - localhost:9092
-        bindings:
-          calculator-in:
-            destination: expressionpair
-            contentType: 'application/json'
-          calculator-out:
-            destination: hashmap
-            contentType: application/json   
+ 
   redis:
     host: redis
     port: 6379
