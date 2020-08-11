@@ -1,4 +1,4 @@
-# OPenshift 4.x Installtion
+# Openshift 4.x Installtion
 
 ## Steps in Openshift Install
 
@@ -21,6 +21,9 @@
 - The control plane sets up the worker nodes.
 
 - The control plane installs additional services in the form of a set of Operators.
+
+![Install](https://user-images.githubusercontent.com/13202504/89897181-41c6a380-dbfc-11ea-9fa9-3f12527eda6c.png)
+
 
 ## Post Install Steps
 1) Check nginx on openshift on bastion:

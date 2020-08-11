@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.calculator.eventprocessor.model.ExpressionPair;
 import com.calculator.eventprocessor.model.ExpressionResult;
-import com.calculator.eventprocessor.stream.ProcessorStreams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
