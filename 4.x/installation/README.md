@@ -27,7 +27,7 @@
 # Disconnected Install 
 
 ### If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
-![Setup Mirror Registry](Mirror-Registry.md)
+[Setup Mirror Registry](Mirror-Registry.md)
 
 
 
