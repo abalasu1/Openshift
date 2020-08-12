@@ -26,7 +26,11 @@
 
 ## Pre Install Steps
 
-### [Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
+** These steps are needed only if the internet connection is not available from the master and worker nodes and a disconnected
+install needs to be performed
+
+### [**URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist-needed-only-in-case-of-an-disconnected-install)
+### [**Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 
 ## Openshift Install
 
