@@ -26,11 +26,12 @@
 
 ## Pre Install Steps
 
-### If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
-[Setup Mirror Registry](Mirror-Registry.md)
+### [Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Mirror-Registry.md#setup-mirror-registry)
 
 ## Openshift Install
 
 ## Post Install Steps
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
+
+## Retrying after a failed install
