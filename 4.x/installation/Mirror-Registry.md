@@ -25,7 +25,7 @@ cd /opt/registry/certs
 openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
 ```
 
-- Generate username and password for the registry: 
+- Generate username and password for the registry (ex: user_name=admin, password=admin)
 ```
 htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
 ```
@@ -64,24 +64,24 @@ cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust
 ```
 
-- Confirm Registry is available. (ex: local_registry_host_port=registry.ocp4.ibm.com, local_registry_host_port= 5000)
+- Confirm Registry is available. (ex: local_registry_host_port=registry.ocp4.ibm.com, local_registry_host_port= 5000, user_name=admin, password=admin)
 ```
 curl -u <user_name>:<password> -k https://<local_registry_host_name>:<local_registry_host_port>/v2/_catalog 
 ```
 Expected Result: {"repositories":[]}
 
 - Update pullsecret with username and password created with htpasswd earlier:
-Create encoded pull secret: 
+Create encoded pull secret (ex: user_name=admin, password=admin)
 ```
 echo -n '<user_name>:<password>' | base64 -w0
 ```
 
-b) Update pull secret downloaded from redhat site: 
+b) Update pull secret downloaded from redhat site  (ex: <path>/<pull-secret-file>=/root/.openshift/pull-secret-updated)
 ```
 cat ./pull-secret.text | jq .  > <path>/<pull-secret-file>
 ```
 
-c) Add the following. Credentials = base64 encoded credentials. (ex: mirror_registry=registry.ocp4.ibm.com:5000)
+c) Create the updated pull secret. (ex: mirror_registry=registry.ocp4.ibm.com:5000, Credentials = base64 encoded credentials)
 ```
 "auths": {
 ...
@@ -92,9 +92,18 @@ c) Add the following. Credentials = base64 encoded credentials. (ex: mirror_regi
 ...
 ```
 
-- Pull images to the image registry:
+- Pull images to the image registry. (ex: local_registry_host_port=registry.ocp4.ibm.com, local_registry_host_port= 5000, repository_name=ocp4/openshift4, <path_to_pull_secret>=/root/.openshift/pull-secret-updated)
 ```
+x86:
 export OCP_RELEASE=4.3.18 
+export LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>' 
+export LOCAL_REPOSITORY='<repository_name>' 
+export PRODUCT_REPO='openshift-release-dev' 
+export LOCAL_SECRET_JSON='<path_to_pull_secret>' 
+export RELEASE_NAME="ocp-release" 
+
+ppc64le:
+export OCP_RELEASE=4.3.18-ppc64le
 export LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>' 
 export LOCAL_REPOSITORY='<repository_name>' 
 export PRODUCT_REPO='openshift-release-dev' 
@@ -102,7 +111,30 @@ export LOCAL_SECRET_JSON='<path_to_pull_secret>'
 export RELEASE_NAME="ocp-release" 
 ```
 
-## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. Refer [Setup Helper Node](Helper-Node.md)
+- Mirror the repository
+```
+oc adm -a ${LOCAL_SECRET_JSON} release mirror \
+     --from=quay.io/${PRODUCT_REPO}/${RELEASE_NAME}:${OCP_RELEASE} \
+     --to=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY} \
+     --to-release-image=${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}
+```
+
+- Note down the imagecontentsources output from the previous command
+```
+Example Output:
+
+imageContentSources:
+- mirrors:
+  - registry.ocp4.bancs.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - registry.ocp4.bancs.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+```
+
+
+## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. 
+[Setup Helper Node](Helper-Node.md)
 
 ## Check if images are downloaded to the mirror registry properly
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/_catalog
