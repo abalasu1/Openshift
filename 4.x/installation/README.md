@@ -24,10 +24,12 @@
 
 ![Install](https://user-images.githubusercontent.com/13202504/89897181-41c6a380-dbfc-11ea-9fa9-3f12527eda6c.png)
 
-## Disconnected Install 
+## Pre Install Steps
 
 ### If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
 [Setup Mirror Registry](Mirror-Registry.md)
+
+## Openshift Install
 
 ## Post Install Steps
 
