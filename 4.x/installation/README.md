@@ -29,8 +29,8 @@
 ** These steps are needed only if the internet connection is not available from the master and worker nodes and a disconnected
 install needs to be performed
 
-### [**URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist-needed-only-in-case-of-an-disconnected-install)
-### [**Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
+### [** URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist-needed-only-in-case-of-an-disconnected-install)
+### [** Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 
 ## Openshift Install
 
@@ -40,7 +40,7 @@ install needs to be performed
 
 ## Retrying after a failed install
 
-### [Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#cleanup-mirror-registry)
+### [** Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#cleanup-mirror-registry)
 
 ### [Cleanup files after a failed install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#remove-files-created-by-install-before-restarting-the-install)
 
