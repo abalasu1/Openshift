@@ -33,4 +33,4 @@
 
 ## Post Install Steps
 
-### Deploy a simple application to validate install [Validate](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
+### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)

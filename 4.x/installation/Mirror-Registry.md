@@ -1,20 +1,40 @@
 # Setup Mirror Registry
 
-## Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
+## If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
+
+### Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
 
 - Log into Infrastructure Provider page and download openshift-install, openshift client and pull secret
 (Requires redhat id and password)
 
-- Setup podman: yum -y install podman httpd-tools
+- Setup podman: 
+```
+yum -y install podman httpd-tools
+```
 
-- Create directories for data & certs: mkdir -p /opt/registry/{auth,certs,data}
+- Create directories for data & certs: 
+```
+mkdir -p /opt/registry/auth
+mkdir -p /opt/registry/certs
+mkdir -p /opt/registry/data
+```
 
-- Create Certificates: cd /opt/registry/certs
-openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt. While generating certificates, provide hostname of the machine for "Common Name"
+- Create Certificates: 
+```
+cd /opt/registry/certs
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt. 
+```
 
-- Generate username and password for the registry: htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
+While generating certificates, provide hostname of the machine for "Common Name"
 
-- Create mirror registry: podman run --name mirror-registry -p <local_registry_host_port>:5000 \ 
+- Generate username and password for the registry: 
+```
+htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
+```
+
+- Create mirror registry: 
+```
+podman run --name mirror-registry -p <local_registry_host_port>:5000 \ 
      -v /opt/registry/data:/var/lib/registry:z \
      -v /opt/registry/auth:/auth:z \
      -e "REGISTRY_AUTH=htpasswd" \
@@ -25,6 +45,7 @@ openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -
      -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
      -e REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=true \
      -d docker.io/library/registry:2
+```
 
 podman ps to check if mirror registry pod is running after this command. If a pod is not running,
 this command did not work.
