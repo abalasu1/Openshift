@@ -35,3 +35,5 @@
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
 
 ## Retrying after a failed install
+
+### [Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#Cleanup mirror registry)
