@@ -1,7 +1,7 @@
 # Post Install Steps
 
 ## Deploy a simple application for validation
-1) Check nginx on openshift on bastion:
+For clusters which can pull from internet:
 ```
 ppc64le: oc run nginx --image=ppc64le/nginx --replicas=3
 x86_64: oc run nginx --image=bitnami/nginx --replicas=3
@@ -21,6 +21,7 @@ podman push default-route-openshift-image-registry.apps.gsitest.cp.fyre.ibm.com/
 oc run nginx --image=image-registry.openshift-image-registry:5000/default/nginx
 ```
 
+## Setup Internal Registry
 2) Access registry from bastion or any of the masters/workers:
 oc login -u kubeadmin -p <password_from_install_log> https://api-int.ocp4.ibm.com:6443
 podman login -u kubeadmin -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
