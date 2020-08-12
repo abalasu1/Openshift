@@ -1,7 +1,19 @@
-## Post Install Steps
+# Post Install Steps
+
+## Deploy a simple application for validation
 1) Check nginx on openshift on bastion:
+```
 ppc64le: oc run nginx --image=ppc64le/nginx --replicas=3
 x86_64: oc run nginx --image=bitnami/nginx --replicas=3
+```
+
+For clusters with no internet connection:
+```
+ppc64le: 
+podman pull ppc64le/nginx
+
+x86_64: podman pull bitnami/nginx
+```
 
 2) Access registry from bastion or any of the masters/workers:
 oc login -u kubeadmin -p <password_from_install_log> https://api-int.ocp4.ibm.com:6443
