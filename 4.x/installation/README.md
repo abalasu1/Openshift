@@ -36,4 +36,4 @@
 
 ## Retrying after a failed install
 
-### [Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#Cleanup mirror registry)
+### [Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#cleanup-mirror-registry)
