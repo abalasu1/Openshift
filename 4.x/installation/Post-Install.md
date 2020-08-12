@@ -7,12 +7,18 @@ ppc64le: oc run nginx --image=ppc64le/nginx --replicas=3
 x86_64: oc run nginx --image=bitnami/nginx --replicas=3
 ```
 
-For clusters with no internet connection:
+For clusters with no internet connection (Need to set internal registry first):
 ```
 ppc64le: 
 podman pull ppc64le/nginx
+podman tag ppc64le/nginx default-route-openshift-image-registry.apps.gsitest.cp.fyre.ibm.com/default/nginx
 
-x86_64: podman pull bitnami/nginx
+x86_64: 
+podman pull bitnami/nginx
+podman tag bitnami/nginx default-route-openshift-image-registry.apps.gsitest.cp.fyre.ibm.com/default/nginx
+
+podman push default-route-openshift-image-registry.apps.gsitest.cp.fyre.ibm.com/default/nginx
+oc run nginx --image=image-registry.openshift-image-registry:5000/default/nginx
 ```
 
 2) Access registry from bastion or any of the masters/workers:
