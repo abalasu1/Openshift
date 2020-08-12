@@ -26,7 +26,7 @@
 
 ## Pre Install Steps
 
-### [Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Mirror-Registry.md#setup-mirror-registry)
+### [Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 
 ## Openshift Install
 

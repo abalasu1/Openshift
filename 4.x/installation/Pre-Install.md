@@ -1,6 +1,7 @@
-# Setup Mirror Registry
+# Pre Install Staps
 
-## If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
+## Setup Mirror Registry
+** This is needed only if the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
 
 ### Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
 
@@ -137,9 +138,24 @@ imageContentSources:
 oc adm -a ${LOCAL_SECRET_JSON} release extract --command=openshift-install "${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}:${OCP_RELEASE}"
 ```
 
-## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. 
+### Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. 
 [Setup Helper Node](Helper-Node.md)
 
-## Check if images are downloaded to the mirror registry properly
+### Check if images are downloaded to the mirror registry properly
+```
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/_catalog
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/ocp4/openshift4/tags/list
+```
+## URL's to whitelist (Needed only in case of an Disconnected Install)
+
+1) registry.redhat.io - Provides core container images
+2) *.quay.io - Provides core container images
+3) sso.redhat.com - The https://cloud.redhat.com/openshift site uses authentication from sso.redhat.com
+4) mirror.openshift.com - Required to access mirrored installation content and images
+5) *.cloudfront.net - Required by the Quay CDN to deliver the Quay.io images that the cluster requires
+6) *.apps.<cluster_name>.<base_domain> - Required to access the default cluster routes unless you set an ingress wildcard during installation
+7) quay-registry.s3.amazonaws.com - Required to access Quay image content in AWS
+8) api.openshift.com - Required to check if updates are available for the cluster
+9) art-rhcos-ci.s3.amazonaws.com - Required to download Red Hat Enterprise Linux CoreOS (RHCOS) images
+10) cloud.redhat.com/openshift - Required for your cluster token
+11) https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm - Needed for helpernode
