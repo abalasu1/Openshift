@@ -1,6 +1,6 @@
 # Setup Mirror Registry
 
-Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
+## Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
 
 - Log into Infrastructure Provider page and download openshift-install, openshift client and pull secret
 (Requires redhat id and password)
@@ -11,9 +11,7 @@ Option 1: Create mirror registry with the manual steps documented here: https://
 
 - Create Certificates:
 cd /opt/registry/certs
-openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
-
-While generating certificates, provide hostname of the machine for "Common Name"
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt. While generating certificates, provide hostname of the machine for "Common Name"
 
 - Generate username and password for the registry
 htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
@@ -50,7 +48,7 @@ update-ca-trust
 curl -u <user_name>:<password> -k https://<local_registry_host_name>:<local_registry_host_port>/v2/_catalog 
 Expected Result: {"repositories":[]}
 
-Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. Refer [Setup Helper Node](Helper-Node.md)
+## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. Refer [Setup Helper Node](Helper-Node.md)
 
 ## Check if images are downloaded to the mirror registry properly
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/_catalog
