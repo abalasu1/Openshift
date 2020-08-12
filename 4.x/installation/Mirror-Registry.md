@@ -54,22 +54,37 @@ Issue with machines with multiple nic's (???), try localhost to see if it works,
 cannot be a permanent solution.
 
 - Open firewall ports (if firewall is not running, these commands are not needed):
+```
 firewall-cmd --add-port=<local_registry_host_port>/tcp --zone=internal --permanent 
 firewall-cmd --add-port=<local_registry_host_port>/tcp --zone=public   --permanent 
 firewall-cmd --reload
+```
 
 - Trust Self Signed Certificates:
+```
 cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust
+```
 
 - Confirm Registry is available:
+```
 curl -u <user_name>:<password> -k https://<local_registry_host_name>:<local_registry_host_port>/v2/_catalog 
+```
 Expected Result: {"repositories":[]}
 
 - Update pullsecret with username and password created with htpasswd earlier:
-a) Create encoded pull secret: echo -n '<user_name>:<password>' | base64 -w0
-b) Update pull secret downloaded from redhat site: cat ./pull-secret.text | jq .  > <path>/<pull-secret-file>
+Create encoded pull secret: 
+```
+echo -n '<user_name>:<password>' | base64 -w0
+```
+
+b) Update pull secret downloaded from redhat site: 
+```
+cat ./pull-secret.text | jq .  > <path>/<pull-secret-file>
+```
+
 c) Add the following. Credentials = base64 encoded credentials.
+```
 "auths": {
 ...
     "<mirror_registry>": { 
@@ -77,15 +92,17 @@ c) Add the following. Credentials = base64 encoded credentials.
       "email": "you@example.com"
   },
 ...
+```
 
 - Pull images to the image registry:
+```
 export OCP_RELEASE=4.3.18 
 export LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>' 
 export LOCAL_REPOSITORY='<repository_name>' 
 export PRODUCT_REPO='openshift-release-dev' 
 export LOCAL_SECRET_JSON='<path_to_pull_secret>' 
 export RELEASE_NAME="ocp-release" 
-
+```
 
 ## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. Refer [Setup Helper Node](Helper-Node.md)
 
