@@ -5,19 +5,16 @@
 - Log into Infrastructure Provider page and download openshift-install, openshift client and pull secret
 (Requires redhat id and password)
 
-- Setup podman (yum -y install podman httpd-tools)
+- Setup podman: yum -y install podman httpd-tools
 
-- Create directories for data & certs mkdir -p /opt/registry/{auth,certs,data}
+- Create directories for data & certs: mkdir -p /opt/registry/{auth,certs,data}
 
-- Create Certificates:
-cd /opt/registry/certs
+- Create Certificates: cd /opt/registry/certs
 openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt. While generating certificates, provide hostname of the machine for "Common Name"
 
-- Generate username and password for the registry
-htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
+- Generate username and password for the registry: htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
 
-- Create mirror registry
-podman run --name mirror-registry -p <local_registry_host_port>:5000 \ 
+- Create mirror registry: podman run --name mirror-registry -p <local_registry_host_port>:5000 \ 
      -v /opt/registry/data:/var/lib/registry:z \
      -v /opt/registry/auth:/auth:z \
      -e "REGISTRY_AUTH=htpasswd" \
@@ -32,10 +29,10 @@ podman run --name mirror-registry -p <local_registry_host_port>:5000 \
 podman ps to check if mirror registry pod is running after this command. If a pod is not running,
 this command did not work.
 
-- Issue with machines with multiple nic's (???), try localhost to see if it works, although localhost
+Issue with machines with multiple nic's (???), try localhost to see if it works, although localhost
 cannot be a permanent solution.
 
-- Open firewall ports:
+- Open firewall ports (if firewall is not running, these commands are not needed):
 firewall-cmd --add-port=<local_registry_host_port>/tcp --zone=internal --permanent 
 firewall-cmd --add-port=<local_registry_host_port>/tcp --zone=public   --permanent 
 firewall-cmd --reload
@@ -47,6 +44,27 @@ update-ca-trust
 - Confirm Registry is available:
 curl -u <user_name>:<password> -k https://<local_registry_host_name>:<local_registry_host_port>/v2/_catalog 
 Expected Result: {"repositories":[]}
+
+- Update pullsecret with username and password created with htpasswd earlier:
+a) Create encoded pull secret: echo -n '<user_name>:<password>' | base64 -w0
+b) Update pull secret downloaded from redhat site: cat ./pull-secret.text | jq .  > <path>/<pull-secret-file>
+c) Add the following. Credentials = base64 encoded credentials.
+"auths": {
+...
+    "<mirror_registry>": { 
+      "auth": "<credentials>", 
+      "email": "you@example.com"
+  },
+...
+
+- Pull images to the image registry:
+export OCP_RELEASE=4.3.18 
+export LOCAL_REGISTRY='<local_registry_host_name>:<local_registry_host_port>' 
+export LOCAL_REPOSITORY='<repository_name>' 
+export PRODUCT_REPO='openshift-release-dev' 
+export LOCAL_SECRET_JSON='<path_to_pull_secret>' 
+export RELEASE_NAME="ocp-release" 
+
 
 ## Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. Refer [Setup Helper Node](Helper-Node.md)
 
