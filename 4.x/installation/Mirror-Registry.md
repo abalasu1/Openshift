@@ -19,20 +19,18 @@ mkdir -p /opt/registry/certs
 mkdir -p /opt/registry/data
 ```
 
-- Create Certificates: 
+- Create Certificates. While generating certificates, "Common Name" is the most important parameter, certificates are generated for this name. Provide hostname/ip of the vm or something like registry.ocp4.ibm.com, which can resolve to the ip of the machine.
 ```
 cd /opt/registry/certs
-openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt. 
+openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
 ```
-
-While generating certificates, provide hostname of the machine for "Common Name"
 
 - Generate username and password for the registry: 
 ```
 htpasswd -bBc /opt/registry/auth/htpasswd <user_name> <password> 
 ```
 
-- Create mirror registry: 
+- Create mirror registry: (ex: local_registry_host_port=registry.ocp4.ibm.com)
 ```
 podman run --name mirror-registry -p <local_registry_host_port>:5000 \ 
      -v /opt/registry/data:/var/lib/registry:z \
@@ -66,7 +64,7 @@ cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust
 ```
 
-- Confirm Registry is available:
+- Confirm Registry is available. (ex: local_registry_host_port=registry.ocp4.ibm.com, local_registry_host_port= 5000)
 ```
 curl -u <user_name>:<password> -k https://<local_registry_host_name>:<local_registry_host_port>/v2/_catalog 
 ```
@@ -83,7 +81,7 @@ b) Update pull secret downloaded from redhat site:
 cat ./pull-secret.text | jq .  > <path>/<pull-secret-file>
 ```
 
-c) Add the following. Credentials = base64 encoded credentials.
+c) Add the following. Credentials = base64 encoded credentials. (ex: mirror_registry=registry.ocp4.ibm.com:5000)
 ```
 "auths": {
 ...

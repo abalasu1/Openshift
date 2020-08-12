@@ -37,3 +37,7 @@
 ## Retrying after a failed install
 
 ### [Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#cleanup-mirror-registry)
+
+## Common Issues and Solutions
+
+### X.509 Certificates are expired or invalid errors
