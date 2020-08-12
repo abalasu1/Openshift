@@ -24,11 +24,11 @@
 
 ![Install](https://user-images.githubusercontent.com/13202504/89897181-41c6a380-dbfc-11ea-9fa9-3f12527eda6c.png)
 
-# Disconnected Install 
+## Disconnected Install 
 
 ### If the internet connection is not available from the master and worker nodes, a mirror registry needs to be created, on a machine with internet connection.
 [Setup Mirror Registry](Mirror-Registry.md)
 
-# Post Install Steps
+## Post Install Steps
 
-## Deploy a simple application to validate install
+### Deploy a simple application to validate install
