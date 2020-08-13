@@ -34,7 +34,7 @@ install needs to be performed
 
 ## Openshift Install
 
-### [Create Install Configs]()
+### [Create Install Configs](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-install-configyaml)
 
 ## Post Install Steps
 

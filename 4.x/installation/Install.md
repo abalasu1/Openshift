@@ -7,6 +7,7 @@
 Only needed if you are doing a disconnected installation:
 - additionalTrustBundle: certificate value should be aligned and this has to be done manually after the executing this command.
 ex:
+```
 additionalTrustBundle: |
   -----BEGIN CERTIFICATE-----
   b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
@@ -14,9 +15,19 @@ additionalTrustBundle: |
   gpl7p15NkETQP1OLMWFk17Gxq8rGCmOxOI3CEFqmm/BUYLrVuSrq4JKtyBNlLEp7Rt5h+8
   ...
   -----END CERTIFICATE-----
+```
 
 - imageContentSources:
 If you are using mirror registry, this should include the mirror registry you have created.
+```
+imageContentSources:
+- mirrors:
+  - registry.ocp4.ibm.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+  - registry.ocp4.ibm.com:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+```
 
 For online installs:
 ```
