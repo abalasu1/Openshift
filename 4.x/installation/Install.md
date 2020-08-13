@@ -1,6 +1,50 @@
 # Install Steps
 
 ## Create install-config.yaml
+- clusterNetworks.cidr: CIDR range for pods within openshift, should not clash with any existing IP's in the environoment.
+- serviceNetwork: CIDR range for pods within openshift, should not clash with any existing IP's in the environoment.
+
+Only needed if you are doing a disconnected installation:
+- additionalTrustBundle: certificate value should be aligned and this has to be done manually after the executing this command.
+ex:
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
+  NhAAAAAwEAAQAAAgEApe4dGTTTS1xbGwc/odB5gc+YuHlv+egegD+h529oZx+jD5edzHL5
+  gpl7p15NkETQP1OLMWFk17Gxq8rGCmOxOI3CEFqmm/BUYLrVuSrq4JKtyBNlLEp7Rt5h+8
+  ...
+  -----END CERTIFICATE-----
+
+- imageContentSources:
+If you are using mirror registry, this should include the mirror registry you have created.
+
+For online installs:
+```
+cat <<EOF > install-config.yaml
+apiVersion: v1
+baseDomain: ibm.com
+compute:
+- hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: ocp4
+networking:
+  clusterNetworks:
+  - cidr: 192.112.0.0/16
+    hostPrefix: 24
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 192.113.0.0/16
+platform:
+  none: {}
+```
+
+For offline/disconnected installs:
 ```
 cat <<EOF > install-config.yaml
 apiVersion: v1
@@ -45,14 +89,14 @@ EOF
 openshift-install create manifests
 ```
 
-## Prevent masters from getting scheduled:
+## Prevent masters from getting user workloads:
 ```
 sed -i ‘s/mastersSchedulable: true/mastersSchedulable: false/g’ manifests/cluster-scheduler-02-config.yml
 ```
 
 ## create ignition config’s
 ```
-OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.bancs.com:5000/ocp4/openshift4:4.3.18-ppc64le openshift-install create ignition-configs
+OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.ibm.com:5000/ocp4/openshift4:4.3.18-ppc64le openshift-install create ignition-configs
 ```
 
 10) python3 update_ignition_bootstrap.py
