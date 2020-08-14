@@ -40,6 +40,10 @@ install needs to be performed
 
 ### [Prevent masters from getting user workloads](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#prevent-masters-from-getting-user-workloads)
 
+### [Create ignition config’s](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-ignition-configs)
+
+### [Copy ignition vm’s to webserver]()
+
 ## Post Install Steps
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)

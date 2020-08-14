@@ -117,13 +117,12 @@ ppc64le:
 OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.ibm.com:5000/ocp4/openshift4:4.3.18-ppc64le openshift-install create ignition-configs
 ```
 
-10) python3 update_ignition_bootstrap.py
-
-11) copy ignition vm’s to webserver
+Copy ignition vm’s to webserver
+```
 cp ~/ocp4/*.ign /var/www/html/ignition/
 restorecon -vR /var/www/html/
 chmod o+r /var/www/html/ignition/*.ign
-
+```
  
 12) openshift-install wait-for bootstrap-complete --log-level debug
     Refer journalctl -f  (log output on bootstrap and master server)
