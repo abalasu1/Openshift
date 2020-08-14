@@ -124,22 +124,24 @@ restorecon -vR /var/www/html/
 chmod o+r /var/www/html/ignition/*.ign
 ```
  
-12) openshift-install wait-for bootstrap-complete --log-level debug
-    Refer journalctl -f  (log output on bootstrap and master server)
-          journalcrl -b -f -u bootkube.services ( log output on bootstrap)
+Wait for install to complete
+```
+openshift-install wait-for bootstrap-complete --log-level debug
+````
 
+Run following commands to debug:
+```
+Log output on bootstrap and master server
+journalctl -f  
 
-13) Reboot the servers to use DHCP 
-
- 
+Log output on bootstrap node
+journalcrl -b -f -u bootkube.services
+```
 
 Final Install Steps:
-1) export KUBECONFIG=/root/oc4_new_install/auth/kubeconfig
-oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch ‘{“spec”:{“managementState”:“Managed”}}’
-oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p ‘{“spec”:{“defaultRoute”:true}}’
-
- 
-
-2) watch oc get csr
+```
+export KUBECONFIG=/root/oc4_new_install/auth/kubeconfig
+watch oc get csr
 oc get csr --no-headers | awk ‘{print $1}’ | xargs oc adm certificate approve
 oc get csr | grep ‘system:node’
+```

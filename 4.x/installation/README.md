@@ -42,7 +42,7 @@ install needs to be performed
 
 ### [Create ignition config’s](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-ignition-configs)
 
-### [Copy ignition vm’s to webserver]()
+### [Copy ignition vm’s to webserver](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-ignition-configs)
 
 ## Post Install Steps
 

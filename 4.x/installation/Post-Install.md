@@ -32,6 +32,10 @@ oc run nginx --image=image-registry.openshift-image-registry:5000/default/nginx
 oc login -u kubeadmin -p <password_from_install_log> https://api-int.ocp4.ibm.com:6443
 podman login -u kubeadmin -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
 
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch ‘{“spec”:{“managementState”:“Managed”}}’
+oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p ‘{“spec”:{“defaultRoute”:true}}’
+
+
 3) Expose Registry (Do this if you have access from outside of bastion):
 a) oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
 
