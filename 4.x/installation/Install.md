@@ -26,7 +26,7 @@ imageContentSources:
   source: quay.io/openshift-release-dev/ocp-release
 - mirrors:
   - registry.ocp4.ibm.com:5000/ocp4/openshift4
-  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev  
 ```
 
 For online installs:
@@ -53,6 +53,7 @@ networking:
   - 192.113.0.0/16
 platform:
   none: {}
+EOF
 ```
 
 For offline/disconnected installs:
@@ -105,7 +106,13 @@ openshift-install create manifests
 sed -i ‘s/mastersSchedulable: true/mastersSchedulable: false/g’ manifests/cluster-scheduler-02-config.yml
 ```
 
-## create ignition config’s
+## Create ignition config’s
+x86:
+```
+OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.ibm.com:5000/ocp4/openshift4:4.3.18 openshift-install create ignition-configs
+```
+
+ppc64le:
 ```
 OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.ibm.com:5000/ocp4/openshift4:4.3.18-ppc64le openshift-install create ignition-configs
 ```

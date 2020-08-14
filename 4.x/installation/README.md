@@ -29,16 +29,24 @@
 ** These steps are needed only if the internet connection is not available from the master and worker nodes and a disconnected
 install needs to be performed
 
-### [** URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist-needed-only-in-case-of-an-disconnected-install)
+### [** URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist)
 ### [** Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 
 ## Openshift Install
 
 ### [Create Install Configs](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-install-configyaml)
 
+### [Create manifests file](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-manifests-file)
+
+### [Prevent masters from getting user workloads](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#prevent-masters-from-getting-user-workloads)
+
 ## Post Install Steps
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
+
+### [Create Manifests file](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-manifests-file)
+
+### [Prevent masters from getting user workloads](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#prevent-masters-from-getting-user-workloads)
 
 ## Retrying after a failed install
 
