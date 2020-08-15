@@ -76,7 +76,7 @@ helm_source: "https://get.helm.sh/helm-v3.2.4-linux-ppc64le.tar.gz"
 
 - disk: vda/sda (If the value is wrong, macines will not get bootstrapped)
 
-### To setup local regustry
+### To setup local registry
 x86:
 ```
 setup_registry:

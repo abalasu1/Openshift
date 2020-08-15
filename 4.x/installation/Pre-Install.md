@@ -138,7 +138,7 @@ oc adm -a ${LOCAL_SECRET_JSON} release extract --command=openshift-install "${LO
 ```
 
 ### Option 2: https://github.com/RedHatOfficial/ocp4-helpernode - This ansible script does much more than just the mirror registry. 
-[Setup Helper Node](Helper-Node.md)
+[Use Helper Node Script to set up mirror registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md#to-setup-local-registry)
 
 ### Check if images are downloaded to the mirror registry properly
 ```
