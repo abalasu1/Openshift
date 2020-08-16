@@ -5,7 +5,7 @@
 ### Helper node when created with the folloeing script, can provide the following services:
 ![Helper Node](https://github.com/RedHatOfficial/ocp4-helpernode/blob/master/docs/images/hn.png)
 
-### Sample vars.yaml files (https://github.com/RedHatOfficial/ocp4-helpernode/tree/master/docs/examples)
+### Providing configurations to the helper node script  (https://github.com/RedHatOfficial/ocp4-helpernode/tree/master/docs/examples)
 
 ```
 ---
@@ -72,7 +72,7 @@ ocp_installer: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/oc
 helm_source: "https://get.helm.sh/helm-v3.2.4-linux-ppc64le.tar.gz"
 ```
 
-### Understanding how to correctly configure vars.yaml
+### Disk type
 
 - disk: vda/sda (If the value is wrong, macines will not get bootstrapped)
 
@@ -135,7 +135,7 @@ other:
     macaddr: "52:54:00:f4:2e:2e"
 ```
 
-### DNS Configuration  (Optional: If the helper node need to function as the DNS server)
+### DNS configuration  (Optional: If the helper node need to function as the DNS server)
 For installations with internet connection from the cluster:
 ```
 dns:
@@ -188,4 +188,22 @@ ocp_install_kernel: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/depen
 ocp_client: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.3.18/openshift-client-linux-4.3.18.tar.gz"
 ocp_installer: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.3.18/openshift-install-linux-4.3.18.tar.gz"
 helm_source: "https://get.helm.sh/helm-v3.2.4-linux-ppc64le.tar.gz"
+```
+
+### Running helper node script
+```
+yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+
+yum -y install ansible git
+git clone https://github.com/RedHatOfficial/ocp4-helpernode
+cd ocp4-helpernode
+
+cp docs/examples/vars.yaml .
+customize vars.yaml according to your requirements
+ansible-playbook -e @vars.yaml tasks/main.yml
+```
+
+### Validating helper node install
+```
+/usr/local/bin/helpernodecheck
 ```

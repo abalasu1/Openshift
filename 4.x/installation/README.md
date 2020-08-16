@@ -1,6 +1,6 @@
-# Openshift 4.x Installtion
+# Openshift 4.x installtion
 
-## Steps in Openshift Install
+## Steps in Openshift install
 
 - The bootstrap machine boots and starts hosting the remote resources required for the master machines to boot. (Requires manual intervention if you provision the infrastructure)
 
@@ -24,18 +24,18 @@
 
 ![Install](https://user-images.githubusercontent.com/13202504/89897181-41c6a380-dbfc-11ea-9fa9-3f12527eda6c.png)
 
-## Pre Install Steps
+## Pre install steps
 
 ** These steps are needed only if the internet connection is not available from the master and worker nodes and a disconnected
 install needs to be performed
 
-### [** URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist)
-### [** Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
-### [Use Helper Node Script to set up the prerequisites](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md)
+### [** URL's to whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist)
+### [** Setup mirror registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
+### [Use helper node script to set up the prerequisites](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md)
 
-## Openshift Install
+## Openshift install
 
-### [Create Install Configs](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-install-configyaml)
+### [Create install configs](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-install-configyaml)
 
 ### [Create manifests file](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-manifests-file)
 
@@ -45,13 +45,9 @@ install needs to be performed
 
 ### [Copy ignition vm’s to webserver](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-ignition-configs)
 
-## Post Install Steps
+## Post install steps
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
-
-### [Create Manifests file](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-manifests-file)
-
-### [Prevent masters from getting user workloads](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#prevent-masters-from-getting-user-workloads)
 
 ## Retrying after a failed install
 
@@ -59,6 +55,6 @@ install needs to be performed
 
 ### [Cleanup files after a failed install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#remove-files-created-by-install-before-restarting-the-install)
 
-## Common Issues and Solutions
+## Common issues and solutions
 
 ### X.509 Certificates are expired or invalid errors

@@ -1,6 +1,6 @@
 # Pre Install Staps
 
-## Setup Mirror Registry
+## Setup mirror registry
 
 ### Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
 

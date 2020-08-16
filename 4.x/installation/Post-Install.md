@@ -27,7 +27,7 @@ podman push default-route-openshift-image-registry.apps.gsitest.cp.fyre.ibm.com/
 oc run nginx --image=image-registry.openshift-image-registry:5000/default/nginx
 ```
 
-## Setup Internal Registry
+## Setup internal registry
 2) Access registry from bastion or any of the masters/workers:
 oc login -u kubeadmin -p <password_from_install_log> https://api-int.ocp4.ibm.com:6443
 podman login -u kubeadmin -p $(oc whoami -t) image-registry.openshift-image-registry.svc:5000
