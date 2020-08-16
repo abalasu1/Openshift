@@ -48,7 +48,11 @@ install needs to be performed
 
 ### [Copy ignition vm’s to webserver](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#create-ignition-configs)
 
-### [Boot Nodes]()
+### [Boot nodes](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#boot-nodes)
+
+### [Final Install Steps](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#final-install-steps)
+
+### [Approve pending certificates](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#approve-all-pending-certificates)
 
 ## Post install steps
 
