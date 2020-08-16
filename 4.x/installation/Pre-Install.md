@@ -10,6 +10,8 @@ Some of the points to consider & decide:
 - A simple architecture diagram with the components of the cluster
 - Configuration of nodes of the cluster
 
+![Typical Topology](https://user-images.githubusercontent.com/13202504/90333130-b6288a80-dfe0-11ea-809a-dc264fe5301a.png)
+
 ## Create bastion node
 - Install RHEL 8.x on the bastion node
 - Usually bastion node can be used as the helper node, and services like mirror registry,
