@@ -33,7 +33,6 @@ install needs to be performed
 ### [Create Bastion Node](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#create-bastion-node)
 ### [Create bootstrap, master and worker nodes](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#create-bootstrap-master--worker-nodes)
 ### [** URL's to whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist-needed-only-in-case-of-offline-installation)
-### [Create bootstrap, master & worker Nodes](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#create-bootstrap-master--worker-nodes)
 ### [** Setup mirror registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 ### [Use helper node script to set up the prerequisites](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md)
 

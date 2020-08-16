@@ -25,7 +25,7 @@ haproxy, DNS server etc. can be run on the bastion node atleast for dev & test p
 
 ![Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)
 
-## URL's to whitelist (Needed only in case of offline installation)
+## URL's to whitelist 
 
 Atleast these url's should be accessible from the node where mirror registry will be running,
 usually the bastion node.
