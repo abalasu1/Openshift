@@ -64,6 +64,10 @@ install needs to be performed
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
 
+### [Set up internal registry]()
+
+### [Set up nfs provisioner]()
+
 ## Retrying after a failed install
 
 *** Do not reuse the same folder to run the openshift-install commands after a failed install. Many

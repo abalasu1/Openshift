@@ -168,15 +168,3 @@ EOF
 ```
 oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
 ```
-
-5) Setup persistent storage for registry:
-a) 
-
-oc create -f deploy/pvc-registry.yaml
-
-b) oc edit configs.imageregistry.operator.openshift.io
-
-add pvc-claim:
-storage:
-  pvc:
-    claim: image-registry-nfs
