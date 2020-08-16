@@ -5,7 +5,7 @@
 - serviceNetwork: CIDR range for pods within openshift, should not clash with any existing IP's in the environoment.
 
 Only needed if you are doing a disconnected installation:
-- additionalTrustBundle: certificate value should be aligned and this has to be done manually after the executing this command.
+- additionalTrustBundle: ***Certificate value should be aligned and this has to be done manually after the executing this command.
 ex:
 ```
 additionalTrustBundle: |
@@ -124,7 +124,11 @@ restorecon -vR /var/www/html/
 chmod o+r /var/www/html/ignition/*.ign
 ```
 
-## Boot master nodes
+## Boot Nodes
+- Boot bootstrap node first. Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk.
+- Boot master nodes: Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk. Master nodes get restarted once more after the initial
+install and should boot from hard disk the second time.
+- Boot worker nodes: Worker nodes can be started after the master nodes are up and running.
  
 ## Wait for install to complete
 ```
@@ -140,9 +144,15 @@ Log output on bootstrap node
 journalcrl -b -f -u bootkube.services
 ```
 
-Final Install Steps:
+## Final Install Steps
+At this point, nodes should get listed properly.
 ```
 export KUBECONFIG=/root/oc4_new_install/auth/kubeconfig
+oc get nodes
+```
+
+## Approve all pending certificates
+```
 watch oc get csr
 oc get csr --no-headers | awk ‘{print $1}’ | xargs oc adm certificate approve
 oc get csr | grep ‘system:node’
