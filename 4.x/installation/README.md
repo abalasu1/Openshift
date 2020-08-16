@@ -61,6 +61,8 @@ times newer configurations do not get picked up when you run it from the same fo
 
 ### [Cleanup files after a failed install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#remove-files-created-by-install-before-restarting-the-install)
 
+### [Restart Services](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#restart-mirror-regstry-httpd-haproxy-)
+
 ## Common issues and solutions
 
 ### X.509 Certificates are expired or invalid errors
