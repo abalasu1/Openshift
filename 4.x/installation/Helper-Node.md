@@ -191,6 +191,8 @@ helm_source: "https://get.helm.sh/helm-v3.2.4-linux-ppc64le.tar.gz"
 ```
 
 ### Running helper node script
+Execute the following commands:
+
 ```
 yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
 
@@ -204,6 +206,22 @@ ansible-playbook -e @vars.yaml tasks/main.yml
 ```
 
 ### Validating helper node install
+Execute the following commands:
+
 ```
-/usr/local/bin/helpernodecheck
+/usr/local/bin/helpernodecheck services
+
+/usr/local/bin/helpernodecheck masters
+/usr/local/bin/helpernodecheck etcd
+/usr/local/bin/helpernodecheck workers
+/usr/local/bin/helpernodecheck registry-setup
+```
+
+### Optional NFS setup
+Add the following configuration:
+
+```
+nfs:
+  server: "192.168.1.100"
+  path: "/exports/helper"
 ```
