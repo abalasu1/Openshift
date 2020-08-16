@@ -10,6 +10,15 @@ Some of the points to consider & decide:
 - A simple architecture diagram with the components of the cluster
 - Configuration of nodes of the cluster
 
+## Create bastion node
+- Install RHEL 8.x on the bastion node
+
+## Create bootstrap, master & worker nodes
+- Depending on the infrastructure platform, create master and worker nodes
+- Note down the mac address and ip address of the nodes
+- Stop all the master and worker nodes, we can start it up latter
+[Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)
+
 ## URL's to whitelist (Needed only in case of offline installation)
 
 Atleast these url's should be accessible from the bastion node
@@ -171,12 +180,3 @@ oc adm -a ${LOCAL_SECRET_JSON} release extract --command=openshift-install "${LO
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/_catalog
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/ocp4/openshift4/tags/list
 ```
-
-## Create bastion node
-- Install RHEL 8.x on the bastion node
-
-## Create bootstrap, master & worker nodes
-- Depending on the infrastructure platform, create master and worker nodes
-- Note down the mac address and ip address of the nodes
-- Stop all the master and worker nodes, we can start it up latter
-[Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)
