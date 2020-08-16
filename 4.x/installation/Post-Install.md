@@ -41,6 +41,8 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p ‘
 oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch ‘{“spec”:{“managementState”:“Managed”}}’
 ```
 
+Edit 
+
 - Access registry from bastion or any of the masters/workers:
 ```
 oc login -u kubeadmin -p <password_from_install_log> https://api-int.ocp4.ibm.com:6443

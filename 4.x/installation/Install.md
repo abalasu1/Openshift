@@ -160,6 +160,12 @@ oc get csr --no-headers | awk ‘{print $1}’ | xargs oc adm certificate approv
 oc get csr | grep ‘system:node’
 ```
 
+## Complete installation
+```
+openshift-install wait-for install-complete--log-level debug
+```
+
+
 ## Make sure all operators are running
 ```
 watch -n5 oc get clusteroperators
