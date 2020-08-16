@@ -136,12 +136,56 @@ other:
 ```
 
 ### DNS Configuration  (Optional: If the helper node need to function as the DNS server)
-Forwarded should be the ip of the helper node, if the helper node is th DNS sever, otherwise
-replace it with appropriate values
+For installations with internet connection from the cluster:
 ```
 dns:
   domain: "example.com"
   clusterid: "ocp4"
   forwarder1: "8.8.8.8"
   forwarder2: "8.8.4.4"
+```
+
+For offline installations:
+```
+dns:
+  domain: "example.com"
+  clusterid: "ocp4"
+  forwarder1: <enterprise forwarder, may be from /etc/resolv.conf>
+  forwarder2: <enterprise forwarder, may be from /etc/resolv.conf>
+```
+
+### DHCP configuration (Not needed if you are using static ip's)
+poolstart, poolend - IP range that can be assigned to nodes within Openshift cluster
+router, bcast, netmask - use 'ifconfig' command to determine the rest of the values
+ipid, netmaskid - use 'ifconfig' command to determine the rest of the values
+```
+dhcp:
+  router: "192.168.7.1"
+  bcast: "192.168.7.255"
+  netmask: "255.255.255.0"
+  poolstart: "192.168.7.10"
+  poolend: "192.168.7.30"
+  ipid: "192.168.7.0"
+  netmaskid: "255.255.255.0"
+```
+
+### Other paths
+x86:
+```
+ocp_bios: "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-4.3.18-metal-bios.raw.gz"
+ocp_initramfs: "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-4.3.18-installer-initramfs.img"
+ocp_install_kernel: "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/pre-release/latest/rhcos-4.3.18-installer-kernel"
+ocp_client: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest/openshift-client-linux-4.3.18.tar.gz"
+ocp_installer: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp-dev-preview/latest/openshift-install-linux-4.3.18.tar.gz"
+helm_source: "https://get.helm.sh/helm-v3.2.4-linux.tar.gz"
+```
+
+ppc64le:
+```
+ocp_bios: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/4.3/4.3.18/rhcos-4.3.18-ppc64le-metal.ppc64le.raw.gz"
+ocp_initramfs: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/4.3/4.3.18/rhcos-4.3.18-ppc64le-installer-initramfs.ppc64le.img"
+ocp_install_kernel: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/dependencies/rhcos/4.3/4.3.18/rhcos-4.3.18-ppc64le-installer-kernel-ppc64le"
+ocp_client: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.3.18/openshift-client-linux-4.3.18.tar.gz"
+ocp_installer: "https://mirror.openshift.com/pub/openshift-v4/ppc64le/clients/ocp/4.3.18/openshift-install-linux-4.3.18.tar.gz"
+helm_source: "https://get.helm.sh/helm-v3.2.4-linux-ppc64le.tar.gz"
 ```
