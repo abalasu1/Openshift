@@ -64,9 +64,11 @@ install needs to be performed
 
 ### [Deploy a simple application to validate install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#deploy-a-simple-application-for-validation)
 
-### [Set up internal registry]()
+### [Set up internal registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#setup-internal-registry)
 
-### [Set up nfs provisioner]()
+### [Set up nfs provisioner](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#setup-nfs-provisioner-for-dynamic-provisioning-with-nfs)
+
+### [Set up authentication provider](https://github.com/abalasu1/Openshift/tree/master/4.x/authentication)
 
 ## Retrying after a failed install
 
