@@ -54,6 +54,9 @@ install needs to be performed
 
 ## Retrying after a failed install
 
+*** Do not reuse the same folder to run the openshift-install commands after a failed install. Many
+times newer configurations do not get picked up when you run it from the same folder.
+
 ### [** Cleanup mirror registry contents](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#cleanup-mirror-registry)
 
 ### [Cleanup files after a failed install](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Clean-Up.md#remove-files-created-by-install-before-restarting-the-install)

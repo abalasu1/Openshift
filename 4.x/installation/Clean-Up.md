@@ -1,21 +1,5 @@
 # Cleanup after a failed install
 
-## Very Important steps for rerunning Openshift install after a failed install 
-
-- Do not reuse the same folder to run the openshift-install commands after a failed install. Many
-times newer configurations do not get picked up when you run it from the same folder.
-
-- Restart mirror regstry, httpd, haproxy, ...
-```
-systemctl restart httpd
-systemctl restart mirror-registry
-systemctl restart haproxy
-
-If DNS is running on helper node:
-systemctl restart dns
-systemctl restart tuned
-```
-
 ## Cleanup mirror registry
 1) These commands will give data of images in the image reigstry
 ```
@@ -74,4 +58,15 @@ rm /var/www/html/install/bios.raw.gz
 rm /var/lib/tftpboot/rhcos/initramfs.img
 rm /var/lib/tftpboot/rhcos/kernel
 rm /var/lib/tftpboot/boot/grub2/grub.cfg
+```
+
+## Restart mirror regstry, httpd, haproxy, ...
+```
+systemctl restart httpd
+systemctl restart mirror-registry
+systemctl restart haproxy
+
+If DNS is running on helper node:
+systemctl restart dns
+systemctl restart tuned
 ```
