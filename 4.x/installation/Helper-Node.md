@@ -214,7 +214,7 @@ Execute the following commands:
 /usr/local/bin/helpernodecheck masters
 /usr/local/bin/helpernodecheck etcd
 /usr/local/bin/helpernodecheck workers
-/usr/local/bin/helpernodecheck registry-setup
+helpernodecheck local-registry-info
 ```
 
 ### Optional NFS setup
