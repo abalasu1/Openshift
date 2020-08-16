@@ -100,3 +100,48 @@ setup_registry:
   release_name: "ocp-release"
   release_tag: "4.3.18-ppc64le"
 ```
+
+### Bootstrap, master and worker configuration
+Names should exactly match the vm names for the install to succeed
+
+```
+bootstrap:
+  name: "bootstrap"
+  ipaddr: "192.168.7.20"
+  macaddr: "52:54:00:60:72:67"
+masters:
+  - name: "master0"
+    ipaddr: "192.168.7.21"
+    macaddr: "52:54:00:e7:9d:67"
+  - name: "master1"
+    ipaddr: "192.168.7.22"
+    macaddr: "52:54:00:80:16:23"
+  - name: "master2"
+    ipaddr: "192.168.7.23"
+    macaddr: "52:54:00:d5:1c:39"
+workers:
+  - name: "worker0"
+    ipaddr: "192.168.7.11"
+    macaddr: "52:54:00:f4:26:a1"
+  - name: "worker1"
+    ipaddr: "192.168.7.12"
+    macaddr: "52:54:00:82:90:00"
+  - name: "worker2"
+    ipaddr: "192.168.7.13"
+    macaddr: "52:54:00:8e:10:34"
+other:
+  - name: "non-cluster-vm"
+    ipaddr: "192.168.7.31"
+    macaddr: "52:54:00:f4:2e:2e"
+```
+
+### DNS Configuration  (Optional: If the helper node need to function as the DNS server)
+Forwarded should be the ip of the helper node, if the helper node is th DNS sever, otherwise
+replace it with appropriate values
+```
+dns:
+  domain: "example.com"
+  clusterid: "ocp4"
+  forwarder1: "8.8.8.8"
+  forwarder2: "8.8.4.4"
+```
