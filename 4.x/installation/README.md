@@ -31,6 +31,7 @@ install needs to be performed
 
 ### [** URL's to Whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist)
 ### [** Setup Mirror Registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
+### [Use Helper Node Script to set up the prerequisites](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md)
 
 ## Openshift Install
 
