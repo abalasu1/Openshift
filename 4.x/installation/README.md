@@ -54,6 +54,8 @@ install needs to be performed
 
 ### [Remove bootstrap node](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#remove-boostrap-node)
 
+### [Complete installation](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#complete-installation)
+
 ### [Approve pending certificates](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#approve-all-pending-certificates)
 
 ### [Check Operators](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#make-sure-all-operators-are-running)
