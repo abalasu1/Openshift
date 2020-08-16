@@ -52,7 +52,11 @@ install needs to be performed
 
 ### [Final Install Steps](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#final-install-steps)
 
+### [Remove bootstrap node]()
+
 ### [Approve pending certificates](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#approve-all-pending-certificates)
+
+### [Check Operators](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Install.md#make-sure-all-operators-are-running)
 
 ## Post install steps
 

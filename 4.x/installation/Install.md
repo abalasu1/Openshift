@@ -143,6 +143,8 @@ journalctl -f
 Log output on bootstrap node
 journalcrl -b -f -u bootkube.services
 ```
+## Remove boostrap node
+- Bootstrap node at this point can be removed safely
 
 ## Final Install Steps
 At this point, nodes should get listed properly.
