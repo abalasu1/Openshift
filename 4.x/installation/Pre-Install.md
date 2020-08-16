@@ -12,16 +12,19 @@ Some of the points to consider & decide:
 
 ## Create bastion node
 - Install RHEL 8.x on the bastion node
+- Usually bastion node can be used as the helper node, and services like mirror registry,
+haproxy, DNS server etc. can be run there
 
 ## Create bootstrap, master & worker nodes
 - Depending on the infrastructure platform, create master and worker nodes
 - Note down the mac address and ip address of the nodes
 - Stop all the master and worker nodes, we can start it up latter
-[Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)
+![Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)
 
 ## URL's to whitelist (Needed only in case of offline installation)
 
-Atleast these url's should be accessible from the bastion node
+Atleast these url's should be accessible from the node where mirror registry will be running,
+usually the bastion node.
 
 1) registry.redhat.io - Provides core container images
 2) *.quay.io - Provides core container images
