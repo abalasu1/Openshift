@@ -1,5 +1,31 @@
 # Pre Install Staps
 
+## Decide on the topology of the cluster
+Some of the points to consider & decide:
+- Infrastructure Platform for the nodes of the cluster
+- Number of master nodes (minimum 3 to make sure some redundancy is built in)
+- Number of worker nodes (depending on the workloads that the cluster needs to serve)
+- Offline/Online install
+- User Provisioned/Install Provisioned install
+- A simple architecture diagram with the components of the cluster
+- Configuration of nodes of the cluster
+
+## URL's to whitelist (Needed only in case of offline installation)
+
+Atleast these url's should be accessible from the bastion node
+
+1) registry.redhat.io - Provides core container images
+2) *.quay.io - Provides core container images
+3) sso.redhat.com - The https://cloud.redhat.com/openshift site uses authentication from sso.redhat.com
+4) mirror.openshift.com - Required to access mirrored installation content and images
+5) *.cloudfront.net - Required by the Quay CDN to deliver the Quay.io images that the cluster requires
+6) *.apps.<cluster_name>.<base_domain> - Required to access the default cluster routes unless you set an ingress wildcard during installation
+7) quay-registry.s3.amazonaws.com - Required to access Quay image content in AWS
+8) api.openshift.com - Required to check if updates are available for the cluster
+9) art-rhcos-ci.s3.amazonaws.com - Required to download Red Hat Enterprise Linux CoreOS (RHCOS) images
+10) cloud.redhat.com/openshift - Required for your cluster token
+11) https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm - Needed for helpernode
+
 ## Setup mirror registry
 
 ### Option 1: Create mirror registry with the manual steps documented here: https://docs.openshift.com/container-platform/4.3/installing/install_config/installing-restricted-networks-preparations.html
@@ -145,16 +171,12 @@ oc adm -a ${LOCAL_SECRET_JSON} release extract --command=openshift-install "${LO
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/_catalog
 curl -s -u admin:admin https://registry.ocp4.bancs.com:5000/v2/ocp4/openshift4/tags/list
 ```
-## URL's to whitelist
 
-1) registry.redhat.io - Provides core container images
-2) *.quay.io - Provides core container images
-3) sso.redhat.com - The https://cloud.redhat.com/openshift site uses authentication from sso.redhat.com
-4) mirror.openshift.com - Required to access mirrored installation content and images
-5) *.cloudfront.net - Required by the Quay CDN to deliver the Quay.io images that the cluster requires
-6) *.apps.<cluster_name>.<base_domain> - Required to access the default cluster routes unless you set an ingress wildcard during installation
-7) quay-registry.s3.amazonaws.com - Required to access Quay image content in AWS
-8) api.openshift.com - Required to check if updates are available for the cluster
-9) art-rhcos-ci.s3.amazonaws.com - Required to download Red Hat Enterprise Linux CoreOS (RHCOS) images
-10) cloud.redhat.com/openshift - Required for your cluster token
-11) https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm - Needed for helpernode
+## Create bastion node
+- Install RHEL 8.x on the bastion node
+
+## Create bootstrap, master & worker nodes
+- Depending on the infrastructure platform, create master and worker nodes
+- Note down the mac address and ip address of the nodes
+- Stop all the master and worker nodes, we can start it up latter
+[Minimum Requirements](https://user-images.githubusercontent.com/13202504/90332160-54642280-dfd8-11ea-91a8-929c1c0d42c2.png)

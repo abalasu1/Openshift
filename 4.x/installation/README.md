@@ -29,7 +29,10 @@
 ** These steps are needed only if the internet connection is not available from the master and worker nodes and a disconnected
 install needs to be performed
 
+### [Decide on the topology of the cluster]()
+### [Create Bastion Node]()
 ### [** URL's to whitelist](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#urls-to-whitelist)
+### [Create bootstrap, master & worker Nodes]()
 ### [** Setup mirror registry](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Pre-Install.md#setup-mirror-registry)
 ### [Use helper node script to set up the prerequisites](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Helper-Node.md)
 
