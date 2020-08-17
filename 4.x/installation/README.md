@@ -83,7 +83,5 @@ times newer configurations do not get picked up when you run it from the same fo
 
 ## Common issues and solutions
 
-### [Logging into bootstrap, master & worker nodes]()
+### [Logging into bootstrap, master & worker nodes](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Troubleshooting.md#logging-into-bootstrap-master--worker-nodes)
 ### [X.509 Certificates are expired or invalid errors]()
-
-- Time should be in sync between the various cluster nodes. 
