@@ -83,4 +83,7 @@ times newer configurations do not get picked up when you run it from the same fo
 
 ## Common issues and solutions
 
-### X.509 Certificates are expired or invalid errors
+### [Logging into bootstrap, master & worker nodes]()
+### [X.509 Certificates are expired or invalid errors]()
+
+- Time should be in sync between the various cluster nodes. 

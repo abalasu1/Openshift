@@ -5,7 +5,7 @@
 - serviceNetwork: CIDR range for pods within openshift, should not clash with any existing IP's in the environoment.
 
 Only needed if you are doing a disconnected installation:
-- additionalTrustBundle: ***Certificate value should be aligned and this has to be done manually after the executing this command.
+- additionalTrustBundle: ***Certificate value should be aligned and this has to be done manually after the executing this command. Remove the extra Begin and End certificate lines.
 ex:
 ```
 additionalTrustBundle: |
@@ -116,6 +116,12 @@ ppc64le:
 ```
 OPENSHIFT_INSTALL_RELEASE_IMAGE_OVERRIDE=registry.ocp4.ibm.com:5000/ocp4/openshift4:4.3.18-ppc64le openshift-install create ignition-configs
 ```
+
+- Check certificate validity on the created ign files using this command:
+```
+for crt in $(jq '.storage.files[]? | select(.path | contains (".crt")) | .contents.source' bootstrap.ign); do echo $crt | awk -F, '{ print $2 }' | base64 -d | openssl x509 -noout -text | grep -A 3 -i Validity; done
+```
+Many of the certificates will have 1 year validity, check closely the certificates with 1 day validity. These certificates should be valid in the bootstrap, master and worker nodes.
 
 ## Copy ignition vm’s to webserver
 ```
