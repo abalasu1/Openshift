@@ -131,15 +131,8 @@ chmod o+r /var/www/html/ignition/*.ign
 ```
 
 ## Boot Nodes
-- Boot bootstrap node first. Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk.
-- Boot master nodes: Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk. Master nodes get restarted once more after the initial
-install and should boot from hard disk the second time.
-- Boot worker nodes: Worker nodes can be started after the master nodes are up and running.
- 
-## Wait for install to complete
-```
-openshift-install wait-for bootstrap-complete --log-level debug
-````
+- Boot bootstrap node first. Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk. Bootstrap node should be up and running before
+other nodes are started.
 
 Run following commands to debug:
 ```
@@ -149,6 +142,16 @@ journalctl -f
 Log output on bootstrap node
 journalcrl -b -f -u bootkube.services
 ```
+
+- Boot master nodes: Coreos will be installed during the startup and after that boot sequence should be changed to boot from hard disk. Master nodes get restarted once more after the initial
+install and should boot from hard disk the second time.
+- Boot worker nodes: Worker nodes can be started after the master nodes are up and running.
+ 
+## Wait for install to complete
+```
+openshift-install wait-for bootstrap-complete --log-level debug
+````
+
 ## Remove boostrap node
 - Bootstrap node at this point can be removed safely
 

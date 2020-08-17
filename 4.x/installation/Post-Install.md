@@ -168,3 +168,61 @@ EOF
 ```
 oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
 ```
+
+## Share Openshift across many teams with appropriate security
+
+- Disable self provisioning of projects
+```
+oc patch clusterrolebinding.rbac self-provisioners -p '{"subjects": null}'
+```
+
+- Create a new project for a team
+```
+oc new-project team1
+```
+
+- Create a new group for the team
+```
+cat <<EOF | oc apply -f -
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: team1-group
+users:
+  - user1
+  - user2
+EOF
+```
+
+- Create role bindings within team1 (add as appropriate)
+```
+# admin within the team1 project
+oc adm policy add-role-to-group admin team1-group -n team1
+
+# registry editor to push and pull images from internal registry
+oc adm policy add-cluster-role-to-group registry-edit team1-group -n team1
+
+# viewer to access internal registry route
+oc adm policy add-cluster-role-to-group view team1-group -n openshift-image-registry
+
+# viewer to access monitoring
+oc adm policy add-cluster-role-to-group view team1-group -n openshift-monitoring
+```
+
+- Set resource quota (adjust as needed)
+```
+cat <<EOF | oc apply -f -
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: example
+  namespace: openshift-image-registry
+spec:
+  hard:
+    pods: '4'
+    requests.cpu: '1'
+    requests.memory: 8Gi
+    limits.cpu: '2'
+    limits.memory: 16Gi
+EOF
+```

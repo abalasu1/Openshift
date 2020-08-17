@@ -70,6 +70,8 @@ install needs to be performed
 
 ### [Set up authentication provider](https://github.com/abalasu1/Openshift/tree/master/4.x/authentication)
 
+### [Share Openshift across many teams with appropriate security]()
+
 ## Retrying after a failed install
 
 *** Do not reuse the same folder to run the openshift-install commands after a failed install. Many
