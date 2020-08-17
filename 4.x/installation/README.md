@@ -70,7 +70,7 @@ install needs to be performed
 
 ### [Set up authentication provider](https://github.com/abalasu1/Openshift/tree/master/4.x/authentication)
 
-### [Share Openshift across many teams with appropriate security](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#share-openshift-across-many-teams-with-appropriate-security)
+### [Share Openshift across many teams with appropriate security](https://github.com/abalasu1/Openshift/blob/master/4.x/installation/Post-Install.md#share-openshift-across-teams)
 
 ## Retrying after a failed install
 

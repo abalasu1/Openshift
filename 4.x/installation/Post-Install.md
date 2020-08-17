@@ -169,7 +169,7 @@ EOF
 oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
 ```
 
-## Share Openshift across many teams with appropriate security
+## Share Openshift across teams
 
 - Disable self provisioning of projects
 ```
