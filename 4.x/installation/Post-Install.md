@@ -215,8 +215,8 @@ cat <<EOF | oc apply -f -
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: example
-  namespace: openshift-image-registry
+  name: team1-quota
+  namespace: team1
 spec:
   hard:
     pods: '4'
