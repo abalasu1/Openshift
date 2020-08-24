@@ -1,0 +1,3 @@
+.bastionkey_id_rsa.pub
+inventory_repo/hosts
+inventory_repo/inventory.cfg
