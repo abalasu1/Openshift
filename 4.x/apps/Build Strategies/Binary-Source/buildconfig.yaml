@@ -1,0 +1,19 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: add
+  name: add
+  namespace: calculator
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: add:latest
+  runPolicy: Serial
+  source:
+    type: Binary
+  strategy:
+    dockerStrategy:
+      dockerfilePath: ./docker/Dockerfile
+    type: Source

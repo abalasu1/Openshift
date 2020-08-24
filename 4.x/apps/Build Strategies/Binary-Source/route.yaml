@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: add
+  name: add
+  namespace: calculator
+spec:
+  host: appdev-cloudnative-ocp4-3b1fc50af0b2002f0241bdf5d2432efd-0000.us-east.containers.appdomain.cloud
+  path: /basicop/add
+  port:
+    targetPort: 8001
+  to:
+    kind: Service
+    name: basic-op-add
+    weight: 100
+  wildcardPolicy: None

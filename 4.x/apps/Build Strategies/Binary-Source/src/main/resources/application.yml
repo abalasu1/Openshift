@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: default
+  application:
+    name: basic-op-add
+  sleuth:
+    traceId128: true
+    sampler:
+      probability: 1.0
+  zipkin:
+    baseUrl: http://zipkin:9411/        
+
+server:
+  port: 8001
+  
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: prod

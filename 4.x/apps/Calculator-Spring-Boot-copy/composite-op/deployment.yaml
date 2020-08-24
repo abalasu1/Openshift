@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: composite-op
+  namespace: <PROJECT>
+  labels:
+    app: composite-op
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: composite-op
+  strategy: 
+    type: Recreate  
+  template:
+    metadata:
+      labels:
+        app: composite-op
+    spec:
+      containers:
+      - image: <CONTAINER>
+        name: composite-op
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8005
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"        
+        readinessProbe:
+          httpGet:
+            path: /actuator
+            port: 8005
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8005
+          initialDelaySeconds: 60
+          timeoutSeconds: 10          
+        resources:
+          requests:
+            cpu: 20m
+            memory: 50Mi
+      restartPolicy: Always  

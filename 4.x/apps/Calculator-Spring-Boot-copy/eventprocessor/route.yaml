@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: eventprocessor
+  name: eventprocessor
+  namespace: <PROJECT>
+spec:
+  host: <DOMAIN>
+  path: /eventprocessor/calculate
+  port:
+    targetPort: 8007-tcp
+  to:
+    kind: Service
+    name: eventprocessor
+    weight: 100
+  wildcardPolicy: None

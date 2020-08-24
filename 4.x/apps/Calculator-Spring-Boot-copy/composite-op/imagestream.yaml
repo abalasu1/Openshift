@@ -1,0 +1,15 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: composite-op
+  name: composite-op
+  namespace: <PROJECT>
+spec:
+  lookupPolicy:
+    local: false
+status:
+  dockerImageRepository: <CONTAINER>
+  tags:
+  - items:
+    tag: latest

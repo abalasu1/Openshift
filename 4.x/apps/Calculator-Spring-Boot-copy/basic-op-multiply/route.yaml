@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: multiply
+  name: multiply
+  namespace: <PROJECT>
+spec:
+  host: <DOMAIN>
+  path: /basicop/multiply
+  port:
+    targetPort: 8003
+  to:
+    kind: Service
+    name: basic-op-multiply
+    weight: 100
+  wildcardPolicy: None

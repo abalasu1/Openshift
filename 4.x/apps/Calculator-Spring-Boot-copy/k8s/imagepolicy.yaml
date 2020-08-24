@@ -1,0 +1,11 @@
+apiVersion: securityenforcement.admission.cloud.ibm.com/v1beta1
+kind: ImagePolicy
+metadata:
+  name: calc-springboot-image-policy
+  namespace: calculator
+spec:
+  repositories:
+    - name: "docker.io/*"
+      policy:
+        va:
+          enabled: false

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: composite-op
+  name: composite-op
+  namespace: <PROJECT>
+spec:
+  ports:
+  - name: 8005-tcp
+    port: 8005
+    protocol: TCP
+    targetPort: 8005
+  selector:
+    app: composite-op
+  type: ClusterIP

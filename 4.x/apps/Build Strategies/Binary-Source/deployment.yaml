@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: basic-op-add
+  namespace: calculator
+  labels:
+    app: basic-op-add
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: basic-op-add
+  strategy: 
+    type: Recreate  
+  template:
+    metadata:
+      labels:
+        app: basic-op-add
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/calculator/add
+        name: add
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8001
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"        
+        readinessProbe:
+          httpGet:
+            path: /actuator
+            port: 8001
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8001
+          initialDelaySeconds: 60
+          timeoutSeconds: 10          
+        resources:
+          requests:
+            cpu: 20m
+            memory: 50Mi
+      restartPolicy: Always  

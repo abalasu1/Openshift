@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventprocessor
+  namespace: <PROJECT>
+  labels:
+    app: eventprocessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eventprocessor
+  strategy: 
+    type: Recreate  
+  template:
+    metadata:
+      labels:
+        app: eventprocessor
+    spec:
+      containers:
+      - image: <CONTAINER>
+        name: eventprocessor
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8007
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"
+        readinessProbe:
+          httpGet:
+            path: /actuator
+            port: 8007
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8007
+          initialDelaySeconds: 60
+          timeoutSeconds: 10          
+        resources:
+          requests:
+            cpu: 20m
+            memory: 50Mi           
+      restartPolicy: Always
