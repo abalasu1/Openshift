@@ -1,0 +1,22 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  labels:
+    app: build
+  name: build-bc
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: build-is:latest
+  runPolicy: Serial
+  source:
+    contextDir: 4.x/apps/Simple-SpringBoot-App/
+    git:
+      ref: master
+      uri: https://github.com/abalasu1/Openshift.git
+    type: Git
+  strategy:
+    dockerStrategy:
+      dockerfilePath: ./Dockerfile
+    type: Source
