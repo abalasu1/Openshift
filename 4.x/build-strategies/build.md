@@ -46,11 +46,11 @@ oc apply -f imagestream.yaml
 
 ### Buildconfig with docker strategy
 ```
-For disconnected installations:
+For installations with internet connection:
 oc apply -f buildconfig-dockerbuild.yaml
 oc start-build build-bc
 
-else for installations with internet connection:
+else disconnected installations:
 oc apply -f buildconfig-dockerbuild-internal-registry.yaml
 oc start-build build-bc
 ```
@@ -89,11 +89,11 @@ oc apply -f imagestream.yaml
 
 ### Binary build - Buildconfig with binary strategy
 ```
-For disconnected installations:
+For installations with internet connection:
 oc apply -f buildconfig-binarybuild.yaml
 oc start-build build-bc --from-dir=../apps/Simple-SpringBoot-App/
 
-else for installations with internet connection:
+else disconnected installations:
 oc apply -f buildconfig-binarybuild-internal-registry.yaml
 oc start-build build-bc --from-dir=../apps/Simple-SpringBoot-App/
 ```
@@ -118,3 +118,5 @@ oc delete -f deployment.yaml
 oc delete -f buildconfig-binarybuild.yaml
 oc delete -f imagestream.yaml
 ```
+
+## Optimizing Image Size:
