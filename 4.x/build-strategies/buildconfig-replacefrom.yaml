@@ -20,6 +20,6 @@ spec:
     dockerStrategy:
       from:
         kind: "ImageStreamTag"
-        name: "ubi-minimal:latest"    
+        name: "ubi:8.2"    
       dockerfilePath: ./Dockerfile
     type: Source
