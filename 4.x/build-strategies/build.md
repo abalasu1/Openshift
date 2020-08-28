@@ -119,4 +119,12 @@ oc delete -f buildconfig-binarybuild.yaml
 oc delete -f imagestream.yaml
 ```
 
-## Optimizing Image Size:
+## Optimizing deployment image:
+
+### - Use [two step build](https://github.com/abalasu1/Openshift/blob/master/4.x/apps/Simple-SpringBoot-App/Dockerfile-optimized) process especially for compile languages like java. First step builds the jar and the second step can only inlcude what is needed to run the image.
+
+### - Install only what is needed in the [final image](https://github.com/abalasu1/Openshift/blob/master/4.x/apps/Simple-SpringBoot-App/Dockerfile-optimized). For ex. installing java-11-openjdk-headless instead of java-11-openjdk in the docker file. This decreases the file size because headless removes the ui libraries.
+
+### - Dockerfile consists of multipla layers. Add "imageOptimizationPolicy: SkipLayers" to the [dockerstrategy](./buildconfig-dockerbuild-optimized.yaml). This is applied by default if a two step build is used.
+
+### - Use podman history <image_name> to see the sized occupied by each layer in a docker image. Optimize the layers with the biggest size.
