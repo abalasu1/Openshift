@@ -1,0 +1,17 @@
+FROM registry.access.redhat.com/ubi8/openjdk-11@sha256:ffb6d79f9fbaabe05c53385a70d10666452adcffa44df756b2cef88e6aa14899 as build
+WORKDIR /tmp
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
+
+RUN ./mvnw install -DskipTests
+
+FROM registry.access.redhat.com/ubi8/ubi@sha256:476c7616e148073e5ba797f6acbd63d0d583c2ddaca1c5c3baa6b59073aa4955
+
+RUN dnf install -y java-11-openjdk
+COPY --from=build /tmp/target/basic-op-add-1.0.0.jar /app.jar
+
+EXPOSE 8001/tcp
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
