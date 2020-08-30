@@ -1,0 +1,7 @@
+FROM registry.access.redhat.com/ubi8/ubi@sha256:476c7616e148073e5ba797f6acbd63d0d583c2ddaca1c5c3baa6b59073aa4955
+
+RUN dnf install -y java-11-openjdk
+COPY target/basic-op-add-1.0.0.jar /app.jar
+
+EXPOSE 8001/tcp
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
