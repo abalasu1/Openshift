@@ -18,5 +18,5 @@ spec:
     type: Git
   strategy:
     dockerStrategy:
-      dockerfilePath: ./Dockerfile-ppc64le
+      dockerfilePath: ./Dockerfile-ppc64le-1step-noarch
     type: Source
