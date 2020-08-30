@@ -11,12 +11,8 @@ spec:
       name: build-is:latest
   runPolicy: Serial
   source:
-    contextDir: 4.x/apps/Simple-SpringBoot-App/
-    git:
-      ref: master
-      uri: https://github.com/abalasu1/Openshift.git
-    type: Git
+    type: Binary
   strategy:
     dockerStrategy:
-      dockerfilePath: ./Dockerfile-ppc64le-1step-noarch
+      dockerfilePath: ./Dockerfile
     type: Source
