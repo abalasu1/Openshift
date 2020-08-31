@@ -1,5 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi@sha256:476c7616e148073e5ba797f6acbd63d0d583c2ddaca1c5c3baa6b59073aa4955
-
+FROM registry.access.redhat.com/ubi8/ubi:8.2
 RUN dnf install -y java-11-openjdk
 COPY ./basic-op-add-1.0.0.jar /app.jar
 
