@@ -128,3 +128,38 @@ oc delete -f imagestream.yaml
 #### - Dockerfile consists of multipla layers. Add "imageOptimizationPolicy: SkipLayers" to the [dockerstrategy](./buildconfig-dockerbuild-optimized.yaml). This is applied by default if a two step build is used.
 
 #### - Use podman history <image_name> to see the sized occupied by each layer in a docker image. Optimize the layers with the biggest size.
+
+## Pull images from one project into another
+
+### Create new project base-images
+```
+oc new-project base-images
+```
+
+### Push image to base-images folder
+```
+export REGISTRY_URL=$(oc get routes default-route -n openshift-image-registry -o jsonpath='{.spec.host}')
+docker pull redhat.registry.io/
+podman pull registry.access.redhat.com/ubi8/openjdk-11
+podman tag registry.access.redhat.com/ubi8/openjdk-11 $REGISTRY_URL/base_images/openjdk-11
+```
+
+### Set it up to pull from a different project for build
+```
+oc project build-strategies
+oc policy add-role-to-user system:image-puller system:serviceaccount:common:builder --namespace=base-images
+```
+
+### Deploy the application using this image
+```
+oc apply -f imagestream.yaml
+
+oc apply -f buildconfig-binarybuild-internal-registry.yaml
+oc start-build build-bc --from-dir=../apps/Simple-SpringBoot-App/
+
+oc apply -f route.yaml
+oc apply -f service.yaml
+oc apply -f deployment.yaml
+oc apply -f buildconfig-binarybuild.yaml
+oc apply -f imagestream.yaml
+```

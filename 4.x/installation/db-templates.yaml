@@ -1,0 +1,2162 @@
+apiVersion: v1
+items:
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mariadb-ephemeral-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MYSQL_USER}
+           Password: ${MYSQL_PASSWORD}
+      Database Name: ${MYSQL_DATABASE}
+     Connection URL: mysql://${DATABASE_SERVICE_NAME}:3306/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md.
+  metadata:
+    annotations:
+      description: |-
+        MariaDB database service, without persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md.
+
+        WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+      iconClass: icon-mariadb
+      openshift.io/display-name: MariaDB (Ephemeral)
+      openshift.io/documentation-url: https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md
+      openshift.io/long-description: This template provides a standalone MariaDB server
+        with a database created.  The database is not stored on persistent storage,
+        so any restart of the service will result in all data being lost.  The database
+        name, username, and password are chosen via parameters when provisioning this
+        service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mariadb
+    creationTimestamp: "2020-09-04T05:20:52Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mariadb-ephemeral
+    namespace: openshift
+    resourceVersion: "11787"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mariadb-ephemeral
+    uid: e1d5d740-b9fd-463d-8a10-a65e87464278
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-root_password: '{.data[''database-root-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${MYSQL_DATABASE}
+      database-password: ${MYSQL_PASSWORD}
+      database-root-password: ${MYSQL_ROOT_PASSWORD}
+      database-user: ${MYSQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mariadb")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mariadb
+        port: 3306
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-root-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 3306
+              timeoutSeconds: 1
+            name: mariadb
+            ports:
+            - containerPort: 3306
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D
+                  $MYSQL_DATABASE -e 'SELECT 1'
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            volumeMounts:
+            - mountPath: /var/lib/mysql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          volumes:
+          - emptyDir:
+              medium: ""
+            name: ${DATABASE_SERVICE_NAME}-data
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mariadb
+          from:
+            kind: ImageStreamTag
+            name: mariadb:${MARIADB_VERSION}
+            namespace: ${NAMESPACE}
+        type: ImageChange
+      - type: ConfigChange
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mariadb
+  - description: Username for MariaDB user that will be used for accessing the database.
+    displayName: MariaDB Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MYSQL_USER
+    required: true
+  - description: Password for the MariaDB connection user.
+    displayName: MariaDB Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_PASSWORD
+    required: true
+  - description: Password for the MariaDB root user.
+    displayName: MariaDB root Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_ROOT_PASSWORD
+    required: true
+  - description: Name of the MariaDB database accessed.
+    displayName: MariaDB Database Name
+    name: MYSQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Version of MariaDB image to be used (10.2 or latest).
+    displayName: Version of MariaDB Image
+    name: MARIADB_VERSION
+    required: true
+    value: "10.2"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mariadb-persistent-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MYSQL_USER}
+           Password: ${MYSQL_PASSWORD}
+      Database Name: ${MYSQL_DATABASE}
+     Connection URL: mysql://${DATABASE_SERVICE_NAME}:3306/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md.
+  metadata:
+    annotations:
+      description: |-
+        MariaDB database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md.
+
+        NOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.
+      iconClass: icon-mariadb
+      openshift.io/display-name: MariaDB
+      openshift.io/documentation-url: https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md
+      openshift.io/long-description: This template provides a standalone MariaDB server
+        with a database created.  The database is stored on persistent storage.  The
+        database name, username, and password are chosen via parameters when provisioning
+        this service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mariadb
+    creationTimestamp: "2020-09-04T05:20:51Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mariadb-persistent
+    namespace: openshift
+    resourceVersion: "11669"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mariadb-persistent
+    uid: 70fb4b56-7f2b-4c87-a0d7-6953fdb87e14
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-root_password: '{.data[''database-root-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${MYSQL_DATABASE}
+      database-password: ${MYSQL_PASSWORD}
+      database-root-password: ${MYSQL_ROOT_PASSWORD}
+      database-user: ${MYSQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mariadb")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mariadb
+        port: 3306
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_CAPACITY}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-root-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 3306
+              timeoutSeconds: 1
+            name: mariadb
+            ports:
+            - containerPort: 3306
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D
+                  $MYSQL_DATABASE -e 'SELECT 1'
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            volumeMounts:
+            - mountPath: /var/lib/mysql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${DATABASE_SERVICE_NAME}
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mariadb
+          from:
+            kind: ImageStreamTag
+            name: mariadb:${MARIADB_VERSION}
+            namespace: ${NAMESPACE}
+        type: ImageChange
+      - type: ConfigChange
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mariadb
+  - description: Username for MariaDB user that will be used for accessing the database.
+    displayName: MariaDB Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MYSQL_USER
+    required: true
+  - description: Password for the MariaDB connection user.
+    displayName: MariaDB Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_PASSWORD
+    required: true
+  - description: Password for the MariaDB root user.
+    displayName: MariaDB root Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_ROOT_PASSWORD
+    required: true
+  - description: Name of the MariaDB database accessed.
+    displayName: MariaDB Database Name
+    name: MYSQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Version of MariaDB image to be used (10.2 or latest).
+    displayName: Version of MariaDB Image
+    name: MARIADB_VERSION
+    required: true
+    value: "10.2"
+  - description: Volume space available for data, e.g. 512Mi, 2Gi.
+    displayName: Volume Capacity
+    name: VOLUME_CAPACITY
+    required: true
+    value: 1Gi
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mongodb-ephemeral-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MONGODB_USER}
+           Password: ${MONGODB_PASSWORD}
+      Database Name: ${MONGODB_DATABASE}
+     Connection URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DATABASE_SERVICE_NAME}/${MONGODB_DATABASE}
+
+    For more information about using this template, including OpenShift considerations, see documentation in the upstream repository: https://github.com/sclorg/mongodb-container.
+  metadata:
+    annotations:
+      description: |-
+        MongoDB database service, without persistent storage. For more information about using this template, including OpenShift considerations, see documentation in the upstream repository: https://github.com/sclorg/mongodb-container.
+
+        WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+      iconClass: icon-mongodb
+      openshift.io/display-name: MongoDB (Ephemeral)
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/mongodb.html
+      openshift.io/long-description: This template provides a standalone MongoDB server
+        with a database created.  The database is not stored on persistent storage,
+        so any restart of the service will result in all data being lost.  The database
+        name, username, and password are chosen via parameters when provisioning this
+        service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mongodb
+    creationTimestamp: "2020-09-04T05:20:50Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mongodb-ephemeral
+    namespace: openshift
+    resourceVersion: "11567"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mongodb-ephemeral
+    uid: dc1d7c71-b216-48cc-9e19-47eb76972707
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-admin_password: '{.data[''database-admin-password'']}'
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-admin-password: ${MONGODB_ADMIN_PASSWORD}
+      database-name: ${MONGODB_DATABASE}
+      database-password: ${MONGODB_PASSWORD}
+      database-user: ${MONGODB_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mongo
+        nodePort: 0
+        port: 27017
+        protocol: TCP
+        targetPort: 27017
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-admin-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 27017
+              timeoutSeconds: 1
+            name: mongodb
+            ports:
+            - containerPort: 27017
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+                  --eval="quit()"
+              initialDelaySeconds: 3
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/mongodb/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - emptyDir:
+              medium: ""
+            name: ${DATABASE_SERVICE_NAME}-data
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mongodb
+          from:
+            kind: ImageStreamTag
+            name: mongodb:${MONGODB_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mongodb
+  - description: Username for MongoDB user that will be used for accessing the database.
+    displayName: MongoDB Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MONGODB_USER
+    required: true
+  - description: Password for the MongoDB connection user.
+    displayName: MongoDB Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MONGODB_PASSWORD
+    required: true
+  - description: Name of the MongoDB database accessed.
+    displayName: MongoDB Database Name
+    name: MONGODB_DATABASE
+    required: true
+    value: sampledb
+  - description: Password for the database admin user.
+    displayName: MongoDB Admin Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MONGODB_ADMIN_PASSWORD
+    required: true
+  - description: Version of MongoDB image to be used (3.6 or latest).
+    displayName: Version of MongoDB Image
+    name: MONGODB_VERSION
+    required: true
+    value: "3.6"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mongodb-persistent-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MONGODB_USER}
+           Password: ${MONGODB_PASSWORD}
+      Database Name: ${MONGODB_DATABASE}
+     Connection URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@${DATABASE_SERVICE_NAME}/${MONGODB_DATABASE}
+
+    For more information about using this template, including OpenShift considerations, see documentation in the upstream repository: https://github.com/sclorg/mongodb-container.
+  metadata:
+    annotations:
+      description: |-
+        MongoDB database service, with persistent storage. For more information about using this template, including OpenShift considerations, see documentation in the upstream repository: https://github.com/sclorg/mongodb-container.
+
+        NOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.
+      iconClass: icon-mongodb
+      openshift.io/display-name: MongoDB
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/mongodb.html
+      openshift.io/long-description: This template provides a standalone MongoDB server
+        with a database created.  The database is stored on persistent storage.  The
+        database name, username, and password are chosen via parameters when provisioning
+        this service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mongodb
+    creationTimestamp: "2020-09-04T05:20:50Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mongodb-persistent
+    namespace: openshift
+    resourceVersion: "11608"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mongodb-persistent
+    uid: 83285034-0037-4bcc-88a0-f6d22aa8f190
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-admin_password: '{.data[''database-admin-password'']}'
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-admin-password: ${MONGODB_ADMIN_PASSWORD}
+      database-name: ${MONGODB_DATABASE}
+      database-password: ${MONGODB_PASSWORD}
+      database-user: ${MONGODB_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mongo
+        nodePort: 0
+        port: 27017
+        protocol: TCP
+        targetPort: 27017
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_CAPACITY}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-admin-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MONGODB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 27017
+              timeoutSeconds: 1
+            name: mongodb
+            ports:
+            - containerPort: 27017
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+                  --eval="quit()"
+              initialDelaySeconds: 3
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/mongodb/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${DATABASE_SERVICE_NAME}
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mongodb
+          from:
+            kind: ImageStreamTag
+            name: mongodb:${MONGODB_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mongodb
+  - description: Username for MongoDB user that will be used for accessing the database.
+    displayName: MongoDB Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MONGODB_USER
+    required: true
+  - description: Password for the MongoDB connection user.
+    displayName: MongoDB Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MONGODB_PASSWORD
+    required: true
+  - description: Name of the MongoDB database accessed.
+    displayName: MongoDB Database Name
+    name: MONGODB_DATABASE
+    required: true
+    value: sampledb
+  - description: Password for the database admin user.
+    displayName: MongoDB Admin Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MONGODB_ADMIN_PASSWORD
+    required: true
+  - description: Volume space available for data, e.g. 512Mi, 2Gi.
+    displayName: Volume Capacity
+    name: VOLUME_CAPACITY
+    required: true
+    value: 1Gi
+  - description: Version of MongoDB image to be used (3.6 or latest).
+    displayName: Version of MongoDB Image
+    name: MONGODB_VERSION
+    required: true
+    value: "3.6"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mysql-ephemeral-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MYSQL_USER}
+           Password: ${MYSQL_PASSWORD}
+      Database Name: ${MYSQL_DATABASE}
+     Connection URL: mysql://${DATABASE_SERVICE_NAME}:3306/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mysql-container/blob/master/8.0/root/usr/share/container-scripts/mysql/README.md.
+  metadata:
+    annotations:
+      description: |-
+        MySQL database service, without persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mysql-container/blob/master/8.0/root/usr/share/container-scripts/mysql/README.md.
+
+        WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+      iconClass: icon-mysql-database
+      openshift.io/display-name: MySQL (Ephemeral)
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/mysql.html
+      openshift.io/long-description: This template provides a standalone MySQL server
+        with a database created.  The database is not stored on persistent storage,
+        so any restart of the service will result in all data being lost.  The database
+        name, username, and password are chosen via parameters when provisioning this
+        service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mysql
+    creationTimestamp: "2020-09-04T05:20:49Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mysql-ephemeral
+    namespace: openshift
+    resourceVersion: "11512"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mysql-ephemeral
+    uid: d99c5de1-eb69-4cd3-8585-e11c428061a3
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-root_password: '{.data[''database-root-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${MYSQL_DATABASE}
+      database-password: ${MYSQL_PASSWORD}
+      database-root-password: ${MYSQL_ROOT_PASSWORD}
+      database-user: ${MYSQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mysql")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mysql
+        nodePort: 0
+        port: 3306
+        protocol: TCP
+        targetPort: 3306
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-root-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 3306
+              timeoutSeconds: 1
+            name: mysql
+            ports:
+            - containerPort: 3306
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D
+                  $MYSQL_DATABASE -e 'SELECT 1'
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/mysql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - emptyDir:
+              medium: ""
+            name: ${DATABASE_SERVICE_NAME}-data
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mysql
+          from:
+            kind: ImageStreamTag
+            name: mysql:${MYSQL_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mysql
+  - description: Username for MySQL user that will be used for accessing the database.
+    displayName: MySQL Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MYSQL_USER
+    required: true
+  - description: Password for the MySQL connection user.
+    displayName: MySQL Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_PASSWORD
+    required: true
+  - description: Password for the MySQL root user.
+    displayName: MySQL root user Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_ROOT_PASSWORD
+    required: true
+  - description: Name of the MySQL database accessed.
+    displayName: MySQL Database Name
+    name: MYSQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Version of MySQL image to be used (8.0, or latest).
+    displayName: Version of MySQL Image
+    name: MYSQL_VERSION
+    required: true
+    value: "8.0"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: mysql-persistent-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${MYSQL_USER}
+           Password: ${MYSQL_PASSWORD}
+      Database Name: ${MYSQL_DATABASE}
+     Connection URL: mysql://${DATABASE_SERVICE_NAME}:3306/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mysql-container/blob/master/8.0/root/usr/share/container-scripts/mysql/README.md.
+  metadata:
+    annotations:
+      description: |-
+        MySQL database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mysql-container/blob/master/8.0/root/usr/share/container-scripts/mysql/README.md.
+
+        NOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.
+      iconClass: icon-mysql-database
+      openshift.io/display-name: MySQL
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/mysql.html
+      openshift.io/long-description: This template provides a standalone MySQL server
+        with a database created.  The database is stored on persistent storage.  The
+        database name, username, and password are chosen via parameters when provisioning
+        this service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,mysql
+    creationTimestamp: "2020-09-04T05:20:51Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: mysql-persistent
+    namespace: openshift
+    resourceVersion: "11640"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/mysql-persistent
+    uid: d26477df-6378-47f3-b78e-c2d02bfaec83
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-root_password: '{.data[''database-root-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${MYSQL_DATABASE}
+      database-password: ${MYSQL_PASSWORD}
+      database-root-password: ${MYSQL_ROOT_PASSWORD}
+      database-user: ${MYSQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mysql")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: mysql
+        port: 3306
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_CAPACITY}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - env:
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-root-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 3306
+              timeoutSeconds: 1
+            name: mysql
+            ports:
+            - containerPort: 3306
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D
+                  $MYSQL_DATABASE -e 'SELECT 1'
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            volumeMounts:
+            - mountPath: /var/lib/mysql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${DATABASE_SERVICE_NAME}
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - mysql
+          from:
+            kind: ImageStreamTag
+            name: mysql:${MYSQL_VERSION}
+            namespace: ${NAMESPACE}
+        type: ImageChange
+      - type: ConfigChange
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: mysql
+  - description: Username for MySQL user that will be used for accessing the database.
+    displayName: MySQL Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: MYSQL_USER
+    required: true
+  - description: Password for the MySQL connection user.
+    displayName: MySQL Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_PASSWORD
+    required: true
+  - description: Password for the MySQL root user.
+    displayName: MySQL root user Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: MYSQL_ROOT_PASSWORD
+    required: true
+  - description: Name of the MySQL database accessed.
+    displayName: MySQL Database Name
+    name: MYSQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Volume space available for data, e.g. 512Mi, 2Gi.
+    displayName: Volume Capacity
+    name: VOLUME_CAPACITY
+    required: true
+    value: 1Gi
+  - description: Version of MySQL image to be used (8.0, or latest).
+    displayName: Version of MySQL Image
+    name: MYSQL_VERSION
+    required: true
+    value: "8.0"
+
+
+  kind: Template
+  message: A new java application has been created in your project.
+  metadata:
+    annotations:
+      description: An example Java application using OpenJDK. For more information
+        about using this template, see https://github.com/jboss-openshift/application-templates.
+      iconClass: icon-rh-openjdk
+      openshift.io/display-name: OpenJDK
+      openshift.io/provider-display-name: Red Hat, Inc.
+      samples.operator.openshift.io/version: 4.4.17
+      tags: java
+      template.openshift.io/documentation-url: https://access.redhat.com/documentation/en/
+      template.openshift.io/long-description: This template defines resources needed
+        to develop Red Hat OpenJDK Java based application.
+      template.openshift.io/support-url: https://access.redhat.com
+      version: 1.4.17
+    creationTimestamp: "2020-09-04T05:20:52Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+      template: openjdk-web-basic-s2i
+      xpaas: 1.4.17
+    name: openjdk-web-basic-s2i
+    namespace: openshift
+    resourceVersion: "11764"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/openjdk-web-basic-s2i
+    uid: 1eef1d8f-1c18-4e04-bf25-9160d58a695b
+  objects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        description: The application's http port.
+      labels:
+        application: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
+    spec:
+      ports:
+      - port: 8080
+        targetPort: 8080
+      selector:
+        deploymentConfig: ${APPLICATION_NAME}
+  - apiVersion: v1
+    id: ${APPLICATION_NAME}-http
+    kind: Route
+    metadata:
+      annotations:
+        description: Route for application's http service.
+      labels:
+        application: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
+    spec:
+      host: ${HOSTNAME_HTTP}
+      to:
+        name: ${APPLICATION_NAME}
+  - apiVersion: v1
+    kind: ImageStream
+    metadata:
+      labels:
+        application: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        application: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
+    spec:
+      output:
+        to:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      source:
+        contextDir: ${CONTEXT_DIR}
+        git:
+          ref: ${SOURCE_REPOSITORY_REF}
+          uri: ${SOURCE_REPOSITORY_URL}
+        type: Git
+      strategy:
+        sourceStrategy:
+          forcePull: true
+          from:
+            kind: ImageStreamTag
+            name: java:${JAVA_IMAGE_STREAM_TAG}
+            namespace: ${IMAGE_STREAM_NAMESPACE}
+        type: Source
+      triggers:
+      - github:
+          secret: ${GITHUB_WEBHOOK_SECRET}
+        type: GitHub
+      - generic:
+          secret: ${GENERIC_WEBHOOK_SECRET}
+        type: Generic
+      - imageChange: {}
+        type: ImageChange
+      - type: ConfigChange
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      labels:
+        application: ${APPLICATION_NAME}
+      name: ${APPLICATION_NAME}
+    spec:
+      replicas: 1
+      selector:
+        deploymentConfig: ${APPLICATION_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            application: ${APPLICATION_NAME}
+            deploymentConfig: ${APPLICATION_NAME}
+          name: ${APPLICATION_NAME}
+        spec:
+          containers:
+          - env: []
+            image: ${APPLICATION_NAME}
+            imagePullPolicy: Always
+            name: ${APPLICATION_NAME}
+            ports:
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8443
+              name: https
+              protocol: TCP
+          terminationGracePeriodSeconds: 75
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - ${APPLICATION_NAME}
+          from:
+            kind: ImageStreamTag
+            name: ${APPLICATION_NAME}:latest
+        type: ImageChange
+      - type: ConfigChange
+  parameters:
+  - description: The name for the application.
+    displayName: Application Name
+    name: APPLICATION_NAME
+    required: true
+    value: openjdk-app
+  - description: The version of Java to use, e.g. 8, 11, latest. (Corresponds to the
+      'java' ImageStream tag.)
+    displayName: Java Version
+    name: JAVA_IMAGE_STREAM_TAG
+    required: true
+    value: latest
+  - description: Git source URI for application
+    displayName: Git Repository URL
+    name: SOURCE_REPOSITORY_URL
+    required: true
+    value: https://github.com/jboss-openshift/openshift-quickstarts
+  - description: Git branch/tag reference
+    displayName: Git Reference
+    name: SOURCE_REPOSITORY_REF
+    value: master
+  - description: Path within Git project to build; empty for root project directory.
+    displayName: Context Directory
+    name: CONTEXT_DIR
+    value: undertow-servlet
+  - description: 'Custom hostname for http service route.  Leave blank for default
+      hostname, e.g.: <application-name>-<project>.<default-domain-suffix>'
+    displayName: Custom http Route Hostname
+    name: HOSTNAME_HTTP
+  - description: GitHub trigger secret
+    displayName: Github Webhook Secret
+    from: '[a-zA-Z0-9]{8}'
+    generate: expression
+    name: GITHUB_WEBHOOK_SECRET
+    required: true
+  - description: Generic build trigger secret
+    displayName: Generic Webhook Secret
+    from: '[a-zA-Z0-9]{8}'
+    generate: expression
+    name: GENERIC_WEBHOOK_SECRET
+    required: true
+  - description: Namespace in which the ImageStreams for Red Hat Middleware images
+      are installed. These ImageStreams are normally installed in the openshift namespace.
+      You should only need to modify this if you've installed the ImageStreams in
+      a different namespace/project.
+    displayName: ImageStream Namespace
+    name: IMAGE_STREAM_NAMESPACE
+    required: true
+    value: openshift
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: postgresql-ephemeral-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${POSTGRESQL_USER}
+           Password: ${POSTGRESQL_PASSWORD}
+      Database Name: ${POSTGRESQL_DATABASE}
+     Connection URL: postgresql://${DATABASE_SERVICE_NAME}:5432/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/.
+  metadata:
+    annotations:
+      description: |-
+        PostgreSQL database service, without persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/.
+
+        WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+      iconClass: icon-postgresql
+      openshift.io/display-name: PostgreSQL (Ephemeral)
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/postgresql.html
+      openshift.io/long-description: This template provides a standalone PostgreSQL
+        server with a database created.  The database is not stored on persistent
+        storage, so any restart of the service will result in all data being lost.  The
+        database name, username, and password are chosen via parameters when provisioning
+        this service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,postgresql
+    creationTimestamp: "2020-09-04T05:20:50Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: postgresql-ephemeral
+    namespace: openshift
+    resourceVersion: "11516"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/postgresql-ephemeral
+    uid: 9a0fc098-78be-417d-b99a-baf4bf05e843
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${POSTGRESQL_DATABASE}
+      database-password: ${POSTGRESQL_PASSWORD}
+      database-user: ${POSTGRESQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: postgresql
+        nodePort: 0
+        port: 5432
+        protocol: TCP
+        targetPort: 5432
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              exec:
+                command:
+                - /usr/libexec/check-container
+                - --live
+              initialDelaySeconds: 120
+              timeoutSeconds: 10
+            name: postgresql
+            ports:
+            - containerPort: 5432
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /usr/libexec/check-container
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - emptyDir:
+              medium: ""
+            name: ${DATABASE_SERVICE_NAME}-data
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - postgresql
+          from:
+            kind: ImageStreamTag
+            name: postgresql:${POSTGRESQL_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: postgresql
+  - description: Username for PostgreSQL user that will be used for accessing the
+      database.
+    displayName: PostgreSQL Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: POSTGRESQL_USER
+    required: true
+  - description: Password for the PostgreSQL connection user.
+    displayName: PostgreSQL Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: POSTGRESQL_PASSWORD
+    required: true
+  - description: Name of the PostgreSQL database accessed.
+    displayName: PostgreSQL Database Name
+    name: POSTGRESQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Version of PostgreSQL image to be used (10 or latest).
+    displayName: Version of PostgreSQL Image
+    name: POSTGRESQL_VERSION
+    required: true
+    value: "10"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: postgresql-persistent-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Username: ${POSTGRESQL_USER}
+           Password: ${POSTGRESQL_PASSWORD}
+      Database Name: ${POSTGRESQL_DATABASE}
+     Connection URL: postgresql://${DATABASE_SERVICE_NAME}:5432/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/.
+  metadata:
+    annotations:
+      description: |-
+        PostgreSQL database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/.
+
+        NOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.
+      iconClass: icon-postgresql
+      openshift.io/display-name: PostgreSQL
+      openshift.io/documentation-url: https://docs.okd.io/latest/using_images/db_images/postgresql.html
+      openshift.io/long-description: This template provides a standalone PostgreSQL
+        server with a database created.  The database is stored on persistent storage.  The
+        database name, username, and password are chosen via parameters when provisioning
+        this service.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,postgresql
+    creationTimestamp: "2020-09-04T05:20:53Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: postgresql-persistent
+    namespace: openshift
+    resourceVersion: "11836"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/postgresql-persistent
+    uid: a110ec6e-8a3b-4b06-ae4f-2bd5692ed641
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+        template.openshift.io/expose-username: '{.data[''database-user'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-name: ${POSTGRESQL_DATABASE}
+      database-password: ${POSTGRESQL_PASSWORD}
+      database-user: ${POSTGRESQL_USER}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: postgresql
+        nodePort: 0
+        port: 5432
+        protocol: TCP
+        targetPort: 5432
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_CAPACITY}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              exec:
+                command:
+                - /usr/libexec/check-container
+                - --live
+              initialDelaySeconds: 120
+              timeoutSeconds: 10
+            name: postgresql
+            ports:
+            - containerPort: 5432
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /usr/libexec/check-container
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/pgsql/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${DATABASE_SERVICE_NAME}
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - postgresql
+          from:
+            kind: ImageStreamTag
+            name: postgresql:${POSTGRESQL_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: postgresql
+  - description: Username for PostgreSQL user that will be used for accessing the
+      database.
+    displayName: PostgreSQL Connection Username
+    from: user[A-Z0-9]{3}
+    generate: expression
+    name: POSTGRESQL_USER
+    required: true
+  - description: Password for the PostgreSQL connection user.
+    displayName: PostgreSQL Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: POSTGRESQL_PASSWORD
+    required: true
+  - description: Name of the PostgreSQL database accessed.
+    displayName: PostgreSQL Database Name
+    name: POSTGRESQL_DATABASE
+    required: true
+    value: sampledb
+  - description: Volume space available for data, e.g. 512Mi, 2Gi.
+    displayName: Volume Capacity
+    name: VOLUME_CAPACITY
+    required: true
+    value: 1Gi
+  - description: Version of PostgreSQL image to be used (10 or latest).
+    displayName: Version of PostgreSQL Image
+    name: POSTGRESQL_VERSION
+    required: true
+    value: "10"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: redis-persistent-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Password: ${REDIS_PASSWORD}
+     Connection URL: redis://${DATABASE_SERVICE_NAME}:6379/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/redis-container/blob/master/5.
+  metadata:
+    annotations:
+      description: |-
+        Redis in-memory data structure store, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/redis-container/blob/master/5.
+
+        NOTE: You must have persistent volumes available in your cluster to use this template.
+      iconClass: icon-redis
+      openshift.io/display-name: Redis
+      openshift.io/documentation-url: https://github.com/sclorg/redis-container/tree/master/5
+      openshift.io/long-description: This template provides a standalone Redis server.  The
+        data is stored on persistent storage.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,redis
+    creationTimestamp: "2020-09-04T05:20:51Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: redis-persistent
+    namespace: openshift
+    resourceVersion: "11644"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/redis-persistent
+    uid: 0febd276-d777-460c-adb3-1abc87a36b68
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-password: ${REDIS_PASSWORD}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: redis://{.spec.clusterIP}:{.spec.ports[?(.name=="redis")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: redis
+        nodePort: 0
+        port: 6379
+        protocol: TCP
+        targetPort: 6379
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: ${VOLUME_CAPACITY}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 6379
+              timeoutSeconds: 1
+            name: redis
+            ports:
+            - containerPort: 6379
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - test "$(redis-cli -h 127.0.0.1 -a $REDIS_PASSWORD ping)" == "PONG"
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/redis/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - name: ${DATABASE_SERVICE_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${DATABASE_SERVICE_NAME}
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - redis
+          from:
+            kind: ImageStreamTag
+            name: redis:${REDIS_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: redis
+  - description: Password for the Redis connection user.
+    displayName: Redis Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: REDIS_PASSWORD
+    required: true
+  - description: Volume space available for data, e.g. 512Mi, 2Gi.
+    displayName: Volume Capacity
+    name: VOLUME_CAPACITY
+    required: true
+    value: 1Gi
+  - description: Version of Redis image to be used (5 or latest).
+    displayName: Version of Redis Image
+    name: REDIS_VERSION
+    required: true
+    value: "5"
+- apiVersion: template.openshift.io/v1
+  kind: Template
+  labels:
+    template: redis-ephemeral-template
+  message: |-
+    The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.
+
+           Password: ${REDIS_PASSWORD}
+     Connection URL: redis://${DATABASE_SERVICE_NAME}:6379/
+
+    For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/redis-container/blob/master/5.
+  metadata:
+    annotations:
+      description: |-
+        Redis in-memory data structure store, without persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/redis-container/blob/master/5.
+
+        WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+      iconClass: icon-redis
+      openshift.io/display-name: Redis (Ephemeral)
+      openshift.io/documentation-url: https://github.com/sclorg/redis-container/tree/master/5
+      openshift.io/long-description: This template provides a standalone Redis server.  The
+        data is not stored on persistent storage, so any restart of the service will
+        result in all data being lost.
+      openshift.io/provider-display-name: Red Hat, Inc.
+      openshift.io/support-url: https://access.redhat.com
+      samples.operator.openshift.io/version: 4.4.17
+      tags: database,redis
+    creationTimestamp: "2020-09-04T05:20:53Z"
+    labels:
+      samples.operator.openshift.io/managed: "true"
+    name: redis-ephemeral
+    namespace: openshift
+    resourceVersion: "11813"
+    selfLink: /apis/template.openshift.io/v1/namespaces/openshift/templates/redis-ephemeral
+    uid: 9e91acd4-dedd-4c88-9e67-cd9c38ed1a79
+  objects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      annotations:
+        template.openshift.io/expose-password: '{.data[''database-password'']}'
+      name: ${DATABASE_SERVICE_NAME}
+    stringData:
+      database-password: ${REDIS_PASSWORD}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      annotations:
+        template.openshift.io/expose-uri: redis://{.spec.clusterIP}:{.spec.ports[?(.name=="redis")].port}
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      ports:
+      - name: redis
+        nodePort: 0
+        port: 6379
+        protocol: TCP
+        targetPort: 6379
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      sessionAffinity: None
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: DeploymentConfig
+    metadata:
+      annotations:
+        template.alpha.openshift.io/wait-for-ready: "true"
+      name: ${DATABASE_SERVICE_NAME}
+    spec:
+      replicas: 1
+      selector:
+        name: ${DATABASE_SERVICE_NAME}
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: ${DATABASE_SERVICE_NAME}
+        spec:
+          containers:
+          - capabilities: {}
+            env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: ${DATABASE_SERVICE_NAME}
+            image: ' '
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              initialDelaySeconds: 30
+              tcpSocket:
+                port: 6379
+              timeoutSeconds: 1
+            name: redis
+            ports:
+            - containerPort: 6379
+              protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - test "$(redis-cli -h 127.0.0.1 -a $REDIS_PASSWORD ping)" == "PONG"
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: ${MEMORY_LIMIT}
+            securityContext:
+              capabilities: {}
+              privileged: false
+            terminationMessagePath: /dev/termination-log
+            volumeMounts:
+            - mountPath: /var/lib/redis/data
+              name: ${DATABASE_SERVICE_NAME}-data
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          volumes:
+          - emptyDir:
+              medium: ""
+            name: ${DATABASE_SERVICE_NAME}-data
+      triggers:
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+          - redis
+          from:
+            kind: ImageStreamTag
+            name: redis:${REDIS_VERSION}
+            namespace: ${NAMESPACE}
+          lastTriggeredImage: ""
+        type: ImageChange
+      - type: ConfigChange
+    status: {}
+  parameters:
+  - description: Maximum amount of memory the container can use.
+    displayName: Memory Limit
+    name: MEMORY_LIMIT
+    required: true
+    value: 512Mi
+  - description: The OpenShift Namespace where the ImageStream resides.
+    displayName: Namespace
+    name: NAMESPACE
+    value: openshift
+  - description: The name of the OpenShift Service exposed for the database.
+    displayName: Database Service Name
+    name: DATABASE_SERVICE_NAME
+    required: true
+    value: redis
+  - description: Password for the Redis connection user.
+    displayName: Redis Connection Password
+    from: '[a-zA-Z0-9]{16}'
+    generate: expression
+    name: REDIS_PASSWORD
+    required: true
+  - description: Version of Redis image to be used (5 or latest).
+    displayName: Version of Redis Image
+    name: REDIS_VERSION
+    required: true
+    value: "5"
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
