@@ -169,6 +169,30 @@ EOF
 oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
 ```
 
+## Install standard templates (Needed for ppc64le only)
+
+### Upload images into mirror registry
+```
+export MIRROR_ADDR=registry.ocp4.ibm.com:5000/ocp4/openshift4
+
+oc image mirror registry.redhat.io/rhel8/redis-5:latest ${MIRROR_ADDR}/rhel8/redis-5:latest
+oc image mirror registry.redhat.io/rhel8/postgresql-96:latest ${MIRROR_ADDR}/rhel8/postgresql-96:latest
+oc image mirror registry.redhat.io/rhscl/mongodb-36-rhel7 ${MIRROR_ADDR}/rhscl/mongodb-36-rhel7
+oc image mirror registry.redhat.io/rhel8/mysql-80 ${MIRROR_ADDR}/rhel8/mysql-80
+oc image mirror registry.redhat.io/rhel8/mariadb-103 ${MIRROR_ADDR}/rhel8/mariadb-103
+
+oc create configmap registry-config --from-file=${MIRROR_ADDR_HOSTNAME}:5000=$path/ca.crt -n openshift-config
+oc patch image.config.openshift.io/cluster --patch '{"spec":{"additionalTrustedCA":{"name":"registry-config"}}}' --type=merge
+
+oc get configs.samples.operator.openshift.io -n openshift-cluster-samples-operator
+```
+
+### Apply the standard templates
+```
+oc apply -f db-templates.yaml
+oc apply -f ci-cd.yaml
+```
+
 ## Share Openshift across teams
 
 - Disable self provisioning of projects
